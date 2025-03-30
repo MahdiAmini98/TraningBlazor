@@ -4,3 +4,16 @@
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>
+@* @code{
+    //use OnNavigateAsync="" in Router
+    
+    private async Task OnNavigateAsync(NavigationContext context)
+    {
+        Console.WriteLine($"Navication To {context.Path}");
+        if (context.Path == "counter")
+        {
+            Console.WriteLine($"Navication To counter");
+
+        }
+    }
+} *@
