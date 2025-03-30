@@ -2,6 +2,7 @@ using TraningBlazorProject.Client.Common.Services_Extensions;
 using TraningBlazorProject.Client.Pages;
 using TraningBlazorProject.Client.Pages._4._40_CascadingParameter;
 using TraningBlazorProject.Components;
+using TraningBlazorProject.Client.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,9 @@ builder.Services.AddCascadingValue("Username", p => new UserInfo() { UserName = 
 
 ServicesExtensions.AddCommonServices(builder.Services);
 
+
+// 6.82 add shared services
+builder.Services.AddSharedServices();
 
 builder.Services.AddHttpClient();
 

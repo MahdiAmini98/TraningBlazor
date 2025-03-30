@@ -1,5 +1,4 @@
-﻿@page "/HttpClientEditTodoPage"
-@using System.Text.Json
+﻿@page "/JsonHelperEditTodoPage/{id:int}"
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @rendermode InteractiveWebAssembly
@@ -43,33 +42,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync($"https://localhost:7215/api/HttpClientTodo/{id}");
-        if (response.IsSuccessStatusCode)
-        {
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-
-            todo = JsonSerializer.Deserialize<TodoEditDto>(jsonResponse,
-            new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                });
-
-        }
-        else
-        {
-            Console.WriteLine(response.StatusCode);
-        }
+        todo = await Http.GetFromJsonAsync<TodoEditDto>($"https://localhost:7215/api/JsonHelperTodo/{id}");
     }
 
 
     private async Task UpdateTodo()
     {
-        var jsonContent = JsonSerializer.Serialize(todo);
-
-        var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-        var requestUri = $"https://localhost:7215/api/HttpClientTodo/{id}";
-        var response = await Http.PutAsync(requestUri, httpContent);
+        var response = await Http.PutAsJsonAsync($"https://localhost:7215/api/JsonHelperTodo/{id}", todo);
         if (response.IsSuccessStatusCode)
         {
             Navigation.NavigateTo("todos");

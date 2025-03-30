@@ -1,0 +1,129 @@
+﻿@page "/NamedHttpClientPatternListTodos"
+@using Microsoft.AspNetCore.JsonPatch
+@using TraningBlazorProject.Client.Services.TodoServices
+@rendermode InteractiveWebAssembly
+@attribute [StreamRendering]
+@inject NavigationManager Navigation;
+@inject IJSRuntime JSRuntime;
+@inject ITodoService TodoService
+
+
+<h3>NamedHttpClientPatternListTodos</h3>
+@*
+    NamedHttpClientPattern => 
+    یک الگویی هست که برای استفاده از HttpClient در برنامه های
+    .net  به کار می رود
+    و توسط .net core ارائه شده است
+    اگر از HttpClient ساده برای
+    ارتباط یه api استفاده کنیم
+    بعد از مدتی که پروژه بزرگ می شود و بخاهیم یک تغییر بدهیم
+    اصلا امکان پدیر نیست و باید همه جا را تغییر دهیم و حجم کد زیادی باید بنویسیم و یا تغیر دهیم 
+    این روش برای پروژه های متوسط و کوچیک بسیار مناسب است
+    نگهداری و تغییر دادن بسیار راحت است
+    ابتدا باید پکیج 
+    Microsoft.Extensions.Http
+   در cleint نصب شود
+   و در program.cs
+   builder.Services.AddHttpClient();
+و تنظیمات هر http client  
+در آن می نویسیم و
+api 
+ها را با نام در آن میشناسیم
+
+    و بعد باید یک کلاس بسازیم و از 
+    IHttpClientFactory
+
+    برای نوشتن سرویس آن از
+    TodoServices در client استفاده کردیم
+    و همینطور برای اینکه سرویس ها را باید در دو کلاس 
+    propgram.cs
+    در client , server 
+    اضافه کنیم
+    از ServiceRegistration 
+    استفاده کردیم و سرویس اضافه کردیم
+ 
+*@
+
+@if (todos == null)
+{
+    <div class="alert alert-info" role="alert">
+        <p>Loading...</p>
+    </div>
+}
+else if (todos.Count == 0)
+{
+    <div class="alert alert-warning" role="alert">
+        <p>No To-Do items found.</p>
+    </div>
+}
+else
+{
+    <table class="table table-striped table-hover mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var todo in todos)
+            {
+                <tr>
+                    <td>@todo.Id</td>
+                    <td>@todo.Title</td>
+                    @*  <td>@(todo.IsCompleted ? "Completed" : "Pending")</td> *@
+
+                    <td>
+                        <input type="checkbox"
+                               checked="@todo.IsCompleted"
+                               @onchange="()=> UpdateStatus(todo.Id,!todo.IsCompleted)" />
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" @onclick="() => EditTodo(todo.Id)">Edit</button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDelete(todo.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<NavLink class="btn btn-success mt-3" href="NamedHttpClientPatternCreateTodoPage">Create New ToDo</NavLink>
+
+
+@code {
+    private List<Todo>? todos;
+    protected override async Task OnInitializedAsync()
+    {
+        todos = await TodoService.GetAllTodosAsync();
+    }
+
+    private void EditTodo(int id)
+    {
+        Navigation.NavigateTo($"NamedHttpClientPatternEditTodoPage/{id}");
+    }
+
+    private async Task ConfirmDelete(int id)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"آیا مطمئن هستید که می‌خواهید تسک با شناسه {id} را حذف کنید؟");
+        if (confirmed)
+        {
+            await DeleteTodo(id);
+        }
+    }
+
+    private async Task DeleteTodo(int id)
+    {
+        await TodoService.DeleteTodoAsync(id);
+        todos = await TodoService.GetAllTodosAsync();
+    }
+
+    private async Task UpdateStatus(int id, bool newStatus)
+    {
+        var patchDocument = new JsonPatchDocument<Todo>();
+        patchDocument.Replace(t => t.IsCompleted, newStatus);
+        await TodoService.PartialUpdateTodoAsync(id, patchDocument);
+    }
+}

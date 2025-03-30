@@ -1,31 +1,30 @@
-﻿@page "/HttpClientListTodos"
+﻿@page "/JsonHelperListTodos"
+ @using Microsoft.AspNetCore.JsonPatch
 @inject HttpClient Http
 @rendermode InteractiveWebAssembly
 @attribute [StreamRendering]
 @inject NavigationManager Navigation;
 @inject IJSRuntime JSRuntime;
-
-
-
+<h3>JsonHelper</h3>
 @*
-    http client =>
-    ساده ترین روش api 
-    زدن
-    خیلی باید کد بنویسیم
-    و دستمون باز تره و به هر چیز ی تو درخواست 
-    http دسترسی داریم
-    کدهاش خیلی زیاد تر از بقیه روش هاست
-    باید AddCors 
-    در program.cs اضافه کنیم
-     http client نیز بید در 
-     دو تا program.cs ها اضافه شود
-     ترتیب اجرا شدن پروژه ها را هم باید درست کنیم
-     اول پروژه api
-     باید run شود
-      و بعد پروژه 
-      blazor server
-      AddHttpClient در program اضافه کنیم 
+    JsonHelper => تعدادی اکستنشن متد است که برای
+    httpclient 
+    ها نوشته شده است که میتوانیم درخواست های
+    httpclient را با 
+    کد های خیلی کمتری بنویسیم
+    ولی در پس زمینه برای ارسال درخواست ها از
+    httpclient استفاده میکند
+    برای استفاده باید حتما 
+    @using System.Net.Http.Json
+اضافه کنیم به 
+فایل
+    _Imports.razor
+    و این فایل در پوشه
+    TraningBlazorProject.Client
+    قرار دارد
 *@
+
+
 <h3>To-Do List</h3>
 
 @if (todos == null)
@@ -57,7 +56,13 @@ else
                 <tr>
                     <td>@todo.Id</td>
                     <td>@todo.Title</td>
-                    <td>@(todo.IsCompleted ? "Completed" : "Pending")</td>
+                    @*  <td>@(todo.IsCompleted ? "Completed" : "Pending")</td> *@
+
+                    <td>
+                        <input type="checkbox"
+                               checked="@todo.IsCompleted"
+                               @onchange="()=> UpdateStatus(todo.Id,!todo.IsCompleted)" />
+                    </td>
                     <td>
                         <button class="btn btn-primary btn-sm" @onclick="() => EditTodo(todo.Id)">Edit</button>
                         <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDelete(todo.Id)">Delete</button>
@@ -68,34 +73,19 @@ else
     </table>
 }
 
-<NavLink class="btn btn-success mt-3" href="HttpClientCreateTodoPage">Create New ToDo</NavLink>
+<NavLink class="btn btn-success mt-3" href="JsonHelperCreateTodoPage">Create New ToDo</NavLink>
 
 
 @code {
     private List<Todo>? todos;
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync("https://localhost:7215/api/HttpClientTodo");
-
-        if (response.IsSuccessStatusCode)
-        {
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-
-            todos = System.Text.Json.JsonSerializer
-            .Deserialize<List<Todo>>(jsonResponse, new System.Text.Json.JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                });
-        }
-        else
-        {
-            Console.WriteLine($"Error: {response.StatusCode}");
-        }
+        todos = await Http.GetFromJsonAsync<List<Todo>>("https://localhost:7215/api/JsonHelperTodo");
     }
 
     private void EditTodo(int id)
     {
-        Navigation.NavigateTo($"HttpClientEditTodoPage/{id}");
+        Navigation.NavigateTo($"JsonHelperEditTodoPage/{id}");
     }
 
     private async Task ConfirmDelete(int id)
@@ -109,11 +99,8 @@ else
 
     private async Task DeleteTodo(int id)
     {
-        var requestUri = $"https://localhost:7215/api/HttpClientTodo/{id}";
-
-        var request = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-
-        var response = await Http.SendAsync(request);
+        var requestUri = $"https://localhost:7215/api/JsonHelperTodo/{id}";
+        var response = await Http.DeleteAsync(requestUri);
 
         if (response.IsSuccessStatusCode)
         {
@@ -126,6 +113,31 @@ else
         }
 
     }
+
+
+
+    private async Task UpdateStatus(int id, bool newStatus)
+    {
+
+        var patchDocument = new JsonPatchDocument<Todo>();
+        patchDocument.Replace(t => t.IsCompleted, newStatus);
+
+
+        // var jsonContent = JsonContent.Create(patchDocument);
+        // Console.WriteLine(await jsonContent.ReadAsStringAsync());
+
+
+        var response = await Http.PatchAsJsonAsync($"https://localhost:7215/api/JsonHelperTodo/{id}", patchDocument.Operations);
+        if (response.IsSuccessStatusCode)
+        {
+
+        }
+        else
+        {
+            Console.WriteLine($"Error {response.StatusCode}");
+        }
+    }
+
 
 
     public class Todo

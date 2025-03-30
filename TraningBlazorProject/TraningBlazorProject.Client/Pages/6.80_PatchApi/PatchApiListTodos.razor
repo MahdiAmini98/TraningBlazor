@@ -77,7 +77,7 @@ else
     </table>
 }
 
-<NavLink class="btn btn-success mt-3" href="create-todo">Create New ToDo</NavLink>
+<NavLink class="btn btn-success mt-3" href="HttpClientCreateTodoPage">Create New ToDo</NavLink>
 
 
 @code {
@@ -104,7 +104,7 @@ else
 
     private void EditTodo(int id)
     {
-        Navigation.NavigateTo($"edit-todo/{id}");
+        Navigation.NavigateTo($"HttpClientEditTodoPage/{id}");
     }
 
     private async Task ConfirmDelete(int id)

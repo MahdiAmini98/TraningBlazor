@@ -1,0 +1,44 @@
+﻿@page "/NamedHttpClientPatternCreateTodoPage"
+@using TraningBlazorProject.Client.Services.TodoServices
+
+@rendermode InteractiveWebAssembly
+@inject ITodoService TodoService
+
+<h3>Create To-Do</h3>
+
+<EditForm Model="newTodo" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+        <label for="title">Title:</label>
+        <InputText id="title" @bind-Value="newTodo.Title" placeholder="Enter task title..." />
+    </div>
+
+    <div>
+        <label for="isCompleted">Is Completed:</label>
+        <InputCheckbox id="isCompleted" @bind-Value="newTodo.IsCompleted" />
+    </div>
+
+    <button class="btn btn-success" type="submit">Create</button>
+
+</EditForm>
+
+
+<p class="@textColor">@statusMessage</p>
+
+
+@code {
+    private Todo newTodo = new Todo();
+    private string? statusMessage;
+    private string textColor;
+    private async Task HandleValidSubmit()
+    {
+        await TodoService.AddTodoAsync(newTodo);
+        statusMessage = "کار با موفقیت ثبت شد";
+        newTodo = new Todo();// reset form
+        textColor = "text-success";
+
+    }
+
+
+}
