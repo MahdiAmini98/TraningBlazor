@@ -1,0 +1,322 @@
+﻿@page "/routing"
+@page "/routing/{id:int}"
+@page "/routing/{id:int}/{name}"
+@inject NavigationManager navigationManager
+@* 
+@attribute [Route("/routing")]
+@attribute [Route("/routing/{id:int}")]
+@attribute [Route("/routing/{id:int}/{name}")] *@
+<h3>Routing</h3>
+
+@*
+    Routing => مسیریابی در بلیزور
+    دو روش دارم
+    1- static routing => برای seo بهتر استفاده میشود
+    و برای صفحاتی که prerender دارند
+    یک بار html خام می فرستد به مرورگر 
+    یک بار صفحه تعاملی
+    دیتا را با ریسپانس HTTP  برای مرورگر ارسال می کند
+    2- Interactive Routing => از طریق websocket
+    و signalR ارتباط برقرار میکند
+    و چون در seo  نمیتواند صفحاتی که
+    از طریق وب سوکت هست را مورد جسستجو قرار دهد در واقع این روش برای اپلیکیشن ها و پنل های مدیریتی بهتر است
+   در کامپوننت App.razor میتوانیم این روش را تغییر دهیم
+   و در آن صفحه
+
+   <Routes @rendermode="InteractiveServer" />
+   rendermode="InteractiveServer" می گذاریم
+   ------------------------------------------------
+ما میتوانیم هر کامپوننتی را چندین مسیر مختلف بدهیم 
+
+@page "/routing"
+@page "/routing/{id:int}"
+@page "/routing/{id:int}/{name}"
+@page "/routing/{id:int}/{name}/{count:int}"
+و از طریق 
+@attribute [Route("/routing")]
+@attribute [Route("/routing/{id:int}")]
+@attribute [Route("/routing/{id:int}/{name}")]
+میتوانیم مسیریابی کنیم و به جای
+@page 
+متوانیم  از آن استفاده کنیم
+--------------------------------------------------
+6.72
+مسیریابی کامپوننت هایی که در لایه های دیگر قرار دارند =>
+گاهی اوقات ما یک سری کامپوننت هایی داریم که در لایه client نیستند
+و ما باید مسیر آن ها را کانفیگ کنیم که بتوانیم آن هارا نمایش دهیم
+مثلا من یک پروژه 
+Razor Class Library
+ایجاد کردم و بعضی کامپوننت هایم را در آن نوشتم 
+برای مسیریابی آن
+ابتدا در پروژه
+TraningBlazorProject
+پروژه
+RazorClassLibrary را اضافه میکنم
+و سپس در فایل program.cs
+ .AddAdditionalAssemblies(typeof(RazorClassLibrary._Imports).Assembly);
+ را اضافه میکنم
+ تا 
+ Assembly
+ به MapRazorComponents اضافه شود
+ -------------------------------------------------
+ @page "/routing/{Name:nonfile?}" => این مسیر هر چیزی را می گیرد به جز فایل
+ @page "/routing/{*Path}" => هر مسیر تو در تویی که در 
+    Path    
+    قرار دارد را می گیرد
+    مثال ==== /routing/new  - /routing/new/folder1 - /routing/new/folder1/folder2 , ...
+    ----------------------------------------------
+    NavigationManagerComponent => 
+    @inject NavigationManager navigationManager
+ را توضیح می دهد
+
+
+    ----------------------------------------------------------
+    query String => میتوانیم از طریق 
+    navigationManager
+     query String به کامپوننت ها 
+     ارسال کنیم
+     و در routing در
+     بلیزور از  query String استفاده کنیم
+     [SupplyParameterFromQuery] => این خاصیت برای ارسال query String به کامپوننت ها استفاده میشود
+
+     Name = "QueryIdName" => میتوانم نام پارامتری که در 
+     url به صورت
+     query String وارد می کنم
+     با نام پارامتری که در کامپوننت از query String
+     میگیرم را متفاوت بگذارم
+
+    navigationManager.GetUriWithQueryParameter(name: "QueryProdcutId", 2); => برای ساخت query String 
+    برای مسیر جاری استفاده می شود
+
+  var uriNull = navigationManager.GetUriWithQueryParameter(name: "QueryProdcutId", (int?)null); => 
+  این روش query String را
+  خالی یا null می کند یا حذف
+  --------------------------------------------------------
+  در فایل Routes.razor
+  در کامپوننت
+Router
+یک پارامتر به نام
+OnNavigateAsync 
+دارد که یک متد می گیرد
+و زمانی یک Navigatetion 
+در برنامه ما اتفاق می افتد و میخاهم به یک صفحه دیگر برویم این متد صدا زده می شود و میتوانیم کارهایی که نیاز است قبل از رفتن به 
+به یک آدرس انجام دهیم در این متدانجام دهیم
+    مثال : فرض شود میخواهم هر وقت به آدرس counter برویم یک کاری انجام دهیم
+    @code{
+    private async Task OnNavigateAsync(NavigationContext context)
+    {
+        Console.WriteLine($"Navication To {context.Path}");
+        if (context.Path == "counter")
+        {
+            Console.WriteLine($"Navication To counter");
+
+        }
+    }
+}
+----------------------------------------------------------------
+
+*@
+<p>
+    Routing =&gt; مسیریابی در بلیزور
+    دو روش دارم
+    1- static routing =&gt; برای SEO بهتر استفاده میشود
+    و برای صفحاتی که prerender دارند
+    یک بار html خام می فرستد به مرورگر
+    یک بار صفحه تعاملی
+    دیتا را با ریسپانس HTTP برای مرورگر ارسال می کند
+    2- Interactive Routing =&gt; از طریق WebSocket
+    و SignalR ارتباط برقرار می‌کند
+    و چون در SEO نمی‌تواند صفحاتی که
+    از طریق وب‌سوکت هست را مورد جستجو قرار دهد، در واقع این روش برای اپلیکیشن‌ها و پنل‌های مدیریتی بهتر است
+    در کامپوننت `App.razor` می‌توانیم این روش را تغییر دهیم
+    و در آن صفحه:
+    <br />
+    <code>
+        &lt;Routes @@rendermode="InteractiveServer" /&gt;
+    </code>
+    <br />
+    `rendermode="InteractiveServer"` می‌گذاریم
+    <hr />
+    ما می‌توانیم هر کامپوننتی را چندین مسیر مختلف بدهیم:
+    <br />
+    <code>
+        @@page "/routing"
+        @@page "/routing/{id:int}"
+        @@page "/routing/{id:int}/{name}"
+        @@page "/routing/{id:int}/{name}/{count:int}"
+    </code>
+    <br />
+    و از طریق
+    <br />
+    <code>
+        @@attribute [Route("/routing")]
+        @@attribute [Route("/routing/{id:int}")]
+        @@attribute [Route("/routing/{id:int}/{name}")]
+    </code>
+    <br />
+    می‌توانیم مسیریابی کنیم و به جای `@@page`
+    می‌توانیم از آن استفاده کنیم
+</p>
+<hr />
+<p>
+
+    مسیریابی کامپوننت هایی که در لایه های دیگر قرار دارند =>
+    گاهی اوقات ما یک سری کامپوننت هایی داریم که در لایه client نیستند
+    و ما باید مسیر آن ها را کانفیگ کنیم که بتوانیم آن هارا نمایش دهیم
+    مثلا من یک پروژه
+    <code>
+        Razor Class Library
+    </code>
+    ایجاد کردم و بعضی کامپوننت هایم را در آن نوشتم
+    برای مسیریابی آن
+    ابتدا در پروژه
+    TraningBlazorProject
+    پروژه
+    RazorClassLibrary را اضافه میکنم
+    و سپس در فایل program.cs
+    <code>
+        .AddAdditionalAssemblies(typeof(RazorClassLibrary._Imports).Assembly);
+    </code>
+    را اضافه میکنم
+    تا
+    Assembly
+    به MapRazorComponents اضافه شود
+
+</p>
+<hr />
+<p>
+    navigationManager => این کلاس برای مسیریابی در بلیزور استفاده میشود
+    از طریق این کلاس ما امکانات بیشتری برای جا به جایی بین صفحات در اختیار داریم
+
+    data-enhance-nave="false" => کل صفحه مورد نظر با همه مشتقات آن از سمت سرور مجدد لود می شود
+    data-enhance-nave="true" => فقط محتوای صفحه مورد نظر از سمت سرور مجدد لود می شود
+    --------------------------------------------------------------------------------------
+    navigationManager.BaseUri => این خاصیت مسیر پایه را برای ما برمیگرداند
+    navigationManager.Uri => این خاصیت مسیر کنونی را برای ما برمیگرداند
+    navigationManager.ToBaseRelativePath(navigationManager.Uri) => این متد مسیر کنونی را به مسیر پایه تبدیل می کند
+    NavigateTo => این متد برای جا به جایی بین صفحات استفاده میشود
+    NavigateToWithForceLoad => این متد برای جا به جایی بین صفحات استفاده میشود و میتوانیم برای لود مجدد صفحه از آن استفاده کنیم
+    اگر  forceLoad: true باشد
+    صفحه مورد نظر با همه مشتقات آن از سمت سرور مجدد لود می شود
+
+    NavigateToWithReplace => این متد برای جا به جایی بین صفحات استفاده میشود و میتوانیم برای جایگزینی صفحه مورد نظر با صفحه فعلی از آن استفاده کنیم
+    Refresh => این متد برای Refresh مجدد صفحه استفاده میشود
+
+    navigationManager.LocationChanged => این ایونت هندلر برای تغییر مسیر استفاده میشود
+    وقتی کاربر از یک صفحه ای به صفحه دیگر می رود و جا به جا می شود این رویداد صدا زده می شود
+
+    e.IsNavigationIntercepted => این خاصیت در LocationChangedEventArgs است
+    اگر true باشد
+    مسیریابی از طریق کامپوننت بلیزور صورت گرفته
+    و اگر false باشد
+    از طریق یک تگ a ساده
+    و از طریق خود مروگر انجام شده
+</p>
+<NavigationManagerComponent></NavigationManagerComponent>
+<hr />
+<p>
+    query String => میتوانیم از طریق
+    navigationManager
+    query String به کامپوننت ها
+    ارسال کنیم
+    و در routing در
+    بلیزور از  query String استفاده کنیم
+    <code>  [SupplyParameterFromQuery] =></code> این خاصیت برای ارسال query String به کامپوننت ها استفاده میشود
+
+    <code> Name = "QueryIdName" => </code>میتوانم نام پارامتری که در
+    url به صورت
+    query String وارد می کنم
+    با نام پارامتری که در کامپوننت از query String
+    میگیرم را متفاوت بگذارم
+
+    <code> navigationManager.GetUriWithQueryParameter(name: "QueryProdcutId", 2); =></code> برای ساخت query String
+    برای مسیر جاری استفاده می شود
+
+    <code> var uriNull = navigationManager.GetUriWithQueryParameter(name: "QueryProdcutId", (int?)null); =></code>
+    این روش query String را
+    خالی یا null می کند یا حذف
+</p>
+<hr />
+<p>
+    در فایل<code> Routes.razor</code>
+    در کامپوننت
+    Router
+    یک پارامتر به نام
+    OnNavigateAsync
+    دارد که یک متد می گیرد
+    و زمانی یک Navigatetion
+    در برنامه ما اتفاق می افتد و میخاهم به یک صفحه دیگر برویم این متد صدا زده می شود و میتوانیم کارهایی که نیاز است قبل از رفتن به
+    به یک آدرس انجام دهیم در این متدانجام دهیم
+    مثال : فرض شود میخواهم هر وقت به آدرس counter برویم یک کاری انجام دهیم
+    <br />
+   <code>
+      
+            private async Task OnNavigateAsync(NavigationContext context)
+            {
+                Console.WriteLine($"Navication To {context.Path}");
+                if (context.Path == "counter")
+                {
+                    Console.WriteLine($"Navication To counter");
+
+                }
+            }
+    
+   </code>
+
+</p>
+<hr />
+<p>
+    NavigationLock => این کامپوننت برای قفل کردن مسیریابی بین صفحات استفاده میشود
+    context.PreventNavigation(); => این متد برای قفل کردن مسیریابی بین صفحات استفاده میشود
+    اگر این متد صدا بزنیم دیگر کاربر نمی تواند به هیچ صفحه ای برود.
+    مثلا کاربر در فرمی اطلاعاتی وارد کرده
+    بعد میخواد به یک صفحه دیگر برود
+    میتوانیم صفحه را قفل کنیم و از آن سوال کنیم که آیا میخواهی اطلاعاتی که وارد کردی را ذخیره کنی یا نه
+    یا مثلا پیام دهیم که با جابه جایی شما تمام اطلاعات وارد شده حذف می شود
+
+    ConfirmExternalNavigation => برای آدرس های که خارج از برنامه ما هست
+    Confirm می گیرد
+    همه این موارد در کامپوننت
+    NavigationLockComponent
+    که من در زیر همین جا کامنتش کردم
+</p>
+@* <NavigationLockComponent></NavigationLockComponent>
+ *@
+ @code {
+
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public string Name { get; set; }
+    [Parameter]
+    public int Count { get; set; }
+
+    [Parameter]
+    public string Path { get; set; }
+
+    ///   query String
+
+    [SupplyParameterFromQuery(Name = "QueryIdName")]
+    public int QueryId { get; set; }
+
+    private void ApplayQueryString()
+    {
+        var uri = navigationManager.GetUriWithQueryParameter(name: "QueryProdcutId", 2);
+        var uriNull = navigationManager.GetUriWithQueryParameter(name: "QueryProdcutId", (int?)null);
+        navigationManager.NavigateTo(uri);
+    }
+
+    private void ApplayMultiQueryesString()
+    {
+        var queriesString = new Dictionary<string, object?>
+        {
+            {"QueryParametersName", "Mahdi" },
+            {"QueryParametersId", 6},
+            {"QueryParametersAge", 26},
+            {"QueryParametersProductId", 8},
+        };
+
+        var uri = navigationManager.GetUriWithQueryParameters(navigationManager.ToAbsoluteUri("counter").ToString(),queriesString);
+        navigationManager.NavigateTo(uri);
+    }
+}

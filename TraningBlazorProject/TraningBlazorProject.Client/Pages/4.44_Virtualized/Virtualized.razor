@@ -1,0 +1,103 @@
+﻿@page "/virtualized"
+@using TraningBlazorProject.Client.Services
+@rendermode InteractiveServer
+@inject ProductService productService
+<h3>Virtualized</h3>
+@*
+    زمانی که میخواهیم یک لیستی به کاربر نمایش دهیم و تعداد زیادی از آیتم ها داریم
+   با استفاده از Virtualized
+   سرعت خیلی بالا هست 
+   و از لحاظ مصرف حافظه هم خیلی بهینه هست و فقط آیتم هایی که در صفحه نمایش داده میشوند را نگه میدارد
+   و پرفرمنس زیادی داریم
+   و بهترین جایگزین 
+   استforeach 
+   اگر بر فرض یک لیست 1000000 عددی داشته باشیم 
+   Virtualized 
+   فقط آن تعداد آیتم هایی که در دید کاربر و صفحه نمایش کاربر هست را لود می کند و رندر می گیرد
+    و این باعث میشود که سرعت بالایی داشته باشیم
+    -------------------------------------------------------
+ Virtualize   در کامپوننت
+ اگر داده ها را به صورت کلی و یکباره بخاهیم نمایش دهیم از پارامتر
+ Items
+ استفاده می کنیم
+ ولی اگر بخاهیم به صورت صفحه بندی شده نمایش دهیم که همه داده ها را یک باره در صفحه نیاد از
+ ItemsProvider
+ استفاده می کنیم
+
+ پارامتر ItemsProvider
+ باید از جنس
+ ValueTask باشد
+ و در متد LoadProducts
+ در ورودی می توانیم از
+ ItemsProviderRequest request
+ استفاده کنیم
+ در این صورت صفحه بندی و تعداد نمایش در صفحه را خود بلیزور به عهده می گیرد
+ این کار باعث می شود خود بلیزور مثلا اگر در موبایل است 2 محصول در هر اسکرول نمایش دهد اگر دز یک صفحه نماش بزرگ است تعداد بالاتری 
+ محصول نمایش دهد
+
+
+ ItemContent => کدهایی که میخواهم در حلقه نمایش دهیم در این تگ می نویسیم
+ Placeholder => وقتی دیتا هنوز در صفحه نیامده می توانیم یک loading ... نمایش دهیم
+ EmptyContent => اگر داده نداشته باشیم مقدار  این نمایش داده می شود
+ OverscanCount => اگر مثلا در لحظه کاربر در صفحه نمایش خودش 5 تا محصول ببینید.
+ این گزینه میگوید مثلا
+ 20 تا قبل و بعد محصول 
+ آن 5 تا را هم لود کن
+ ItemSize = > بر اساس px 
+ اندازه باکسی که میخواهیم را می دهیم
+ این کمک می کند باکس محصولات در اسکرول کردن بهتر عمل کند
+*@
+
+
+
+
+<Virtualize ItemsProvider="LoadProducts" Context="product" OverscanCount="20" ItemSize="200">
+
+    <ItemContent>
+        <div class="d-flex align-items-center border-bottom py-3">
+            <div class="me-3">
+                <img src="https://d2v5dzhdg4zhx3.cloudfront.net/web-assets/images/storypages/primary/ProductShowcasesampleimages/JPEG/Product+Showcase-1.jpg" alt="@product.Name" style="width: 150px; height: 150px" />
+            </div>
+            <div>
+                <h5 class="mb-1 text-primary">@product.Name</h5>
+                <p class="mb-1 fw-bold text-success">@product.Price $</p>
+                <p class="text-muted fst-italic">@product.Description</p>
+            </div>
+        </div>
+
+    </ItemContent>
+    <Placeholder>
+        <div class="d-flex align-items-center border-bottom py-3">
+            <div class="me-3">
+                <div class="spinner-border  text-primary" role="status" style="width: 150px; height: 150px">
+                    <span class="visually-hidden">Loading....</span>
+                </div>
+            </div>
+            <div>
+                <h5 class="mb-1 text-primary">Loading Product Name ....</h5>
+                <p class="mb-1 fw-bold text-success">Loading Product Price ....</p>
+                <p class="text-muted fst-italic">Loading Product Description ....</p>
+            </div>
+        </div>
+    </Placeholder>
+    <EmptyContent>
+        <div class="d-flex align-items-center border-bottom py-3">
+          <p>داده ای جهت نمایش یافت نشد.</p>
+        </div>
+    </EmptyContent>
+</Virtualize>
+@code {
+    private List<Product> Products = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var (products, totalCount) = await productService.GetProductsAsync();
+        Products = products;
+    }
+
+    private async ValueTask<ItemsProviderResult<Product>> LoadProducts(ItemsProviderRequest request)
+    {
+        var (products, totalCount) = await productService.GetProductsPagedAsync(request.StartIndex, request.Count);
+        return new ItemsProviderResult<Product>(products, totalCount);
+    }
+}

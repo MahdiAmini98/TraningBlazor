@@ -1,0 +1,36 @@
+﻿@using TraningBlazorProject.Client.Pages._5._57_RecursiveMenu
+<div style="margin-left:20px; border:1px solid red; padding:10px; margin-top:10px">
+    <label>Menu Name:</label>
+    <InputText @bind-Value="Item.Name" class="form-control"/>
+
+    <div style="margin-top:10px">
+        <button class="btn btn-sm btn-success" @onclick="AddChild">Add Submneu</button>
+        <button class="btn btn-sm btn-danger" @onclick="RemoveItem">Remove Submneu</button>
+    </div>
+    @foreach (var child in Item.Children)
+    {
+        <MenuItemComponent Item="child" OnItemRemove="RemoveChild"></MenuItemComponent>
+    }
+
+</div>
+@code {
+    [Parameter]
+    public MenuItem Item { get; set; }
+
+    [Parameter]
+    public EventCallback<MenuItem> OnItemRemove { get; set; }
+    private void AddChild()
+    {
+        Item.Children.Add(new MenuItem() { Name = "Default Submenu" });
+    }
+
+    private async  Task RemoveItem()
+    {
+        await OnItemRemove.InvokeAsync(Item);
+    }
+
+    private async Task RemoveChild(MenuItem child)
+    {
+        Item.Children.Remove(child);
+    }
+}

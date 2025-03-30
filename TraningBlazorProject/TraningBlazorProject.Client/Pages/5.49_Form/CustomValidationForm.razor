@@ -1,0 +1,66 @@
+﻿@using System.ComponentModel.DataAnnotations
+<h5>اعتبار سنجی های custom</h5>
+<EditForm EditContext="editContext" FormName="CustomValidation-UserInterest" Enhance="true" OnValidSubmit="CustomValidationSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label>Custom Validation</label>
+
+        <div class="form-group">
+            <label>نام فارسی محصول</label>
+            <label>
+                <ValidationMessage For="@(() => UserInterest.Name)" />
+            </label>
+            <InputText @bind-Value="UserInterest.Name" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>حتما باید یکی از گزینه های زیر انتخاب کنید برای محصول</label>
+            <InputCheckbox @bind-Value="UserInterest.Music"/>
+            <InputCheckbox @bind-Value="UserInterest.Sport" />
+            <label>
+                <ValidationMessage For="@(() => UserInterest.HasAtLeastOneInterests)" />
+            </label>
+        </div>
+
+    </div>
+
+    <button type="submit" class="btn btn-sm btn-primary mt-5 mb-5">Submit</button>
+</EditForm>
+@code {
+    protected override void OnInitialized()
+    {
+        //custom validation
+        UserInterest ??= new UserInterests();
+        editContext ??= new EditContext(UserInterest);
+        messageStore ??= new ValidationMessageStore(editContext);
+        editContext.OnValidationRequested += HandelCustomValidation;
+    }
+    [SupplyParameterFromForm]
+    private UserInterests? UserInterest { get; set; } = new();
+    private EditContext? editContext;
+    private ValidationMessageStore? messageStore;
+
+    private void HandelCustomValidation(object? sender, ValidationRequestedEventArgs args)
+    {
+        messageStore?.Clear();
+        if (UserInterest.HasAtLeastOneInterests == false)
+        {
+            messageStore?.Add(() => UserInterest.HasAtLeastOneInterests, "پیغام خطای دلخواه");
+        }
+    }
+
+    private void CustomValidationSubmit(EditContext args)
+    {
+        Console.WriteLine("Ok");
+    }
+
+    public class UserInterests
+    {
+        [Required]
+        public string Name { get; set; }
+        public bool Sport { get; set; }
+        public bool Music { get; set; }
+        public bool HasAtLeastOneInterests => Sport || Music;
+    }
+}

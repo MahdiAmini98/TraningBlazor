@@ -1,0 +1,9 @@
+﻿<h3>ParentEventCallBack</h3>
+<ChildEventCallBack OnClickCallback="OnChildClick"></ChildEventCallBack>
+<p>@message</p>
+@code {
+    private string message;
+    private void OnChildClick() { message = "new value"; }
+
+}
+ 

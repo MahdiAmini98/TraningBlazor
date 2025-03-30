@@ -1,0 +1,24 @@
+﻿@page "/Splatting"
+<h3>Splatting</h3>
+
+
+<input @attributes="attributeDictionary" />
+
+<hr/>
+<hr/>
+<hr/>
+<Arbitrary class="btn btn-primary" title="BTN" id="btn"></Arbitrary>
+@code {
+    private readonly Dictionary<string, object> attributeDictionary = new()
+    {
+        {"MaxLenth", "20"},
+        {"PlaceHolder", "متن جدید وارد کنید"},
+        {"Required", "required"},
+        {"size", "30"},
+        {"type", "text"},
+        {"autocomplate", "off"},
+        {"class", "form-control"},
+
+
+    };
+}

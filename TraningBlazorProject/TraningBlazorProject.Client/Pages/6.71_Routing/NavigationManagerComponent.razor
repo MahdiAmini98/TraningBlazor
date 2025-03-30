@@ -1,0 +1,90 @@
+﻿<h3>NavigationManager</h3>
+@inject NavigationManager navigationManager
+@*
+    navigationManager => این کلاس برای مسیریابی در بلیزور استفاده میشود
+    از طریق این کلاس ما امکانات بیشتری برای جا به جایی بین صفحات در اختیار داریم
+
+    data-enhance-nave="false" => کل صفحه مورد نظر با همه مشتقات آن از سمت سرور مجدد لود می شود
+    data-enhance-nave="true" => فقط محتوای صفحه مورد نظر از سمت سرور مجدد لود می شود
+    --------------------------------------------------------------------------------------
+    navigationManager.BaseUri => این خاصیت مسیر پایه را برای ما برمیگرداند
+    navigationManager.Uri => این خاصیت مسیر کنونی را برای ما برمیگرداند
+    navigationManager.ToBaseRelativePath(navigationManager.Uri) => این متد مسیر کنونی را به مسیر پایه تبدیل می کند
+    NavigateTo => این متد برای جا به جایی بین صفحات استفاده میشود
+    NavigateToWithForceLoad => این متد برای جا به جایی بین صفحات استفاده میشود و میتوانیم برای لود مجدد صفحه از آن استفاده کنیم
+   اگر  forceLoad: true باشد
+   صفحه مورد نظر با همه مشتقات آن از سمت سرور مجدد لود می شود
+
+   NavigateToWithReplace => این متد برای جا به جایی بین صفحات استفاده میشود و میتوانیم برای جایگزینی صفحه مورد نظر با صفحه فعلی از آن استفاده کنیم
+   Refresh => این متد برای Refresh مجدد صفحه استفاده میشود
+
+    navigationManager.LocationChanged => این ایونت هندلر برای تغییر مسیر استفاده میشود
+    وقتی کاربر از یک صفحه ای به صفحه دیگر می رود و جا به جا می شود این رویداد صدا زده می شود
+
+    e.IsNavigationIntercepted => این خاصیت در LocationChangedEventArgs است 
+    اگر true باشد 
+    مسیریابی از طریق کامپوننت بلیزور صورت گرفته
+    و اگر false باشد
+    از طریق یک تگ a ساده 
+    و از طریق خود مروگر انجام شده
+    NavigateToAbsoluteUri => این متد یک مسیر را می گیرد و 
+    base uri  اولیه و ثابت 
+    پروژه را به آن مسیر اضافه می مند و یک 
+    uri جدید می سازد
+    و از آن برای جا به جایی بین صفحات استفاده می شود
+ 
+--------------------------------------------------------
+*@
+
+<a href="counter" data-enhance-nave="true">data-enhance-nave=true</a>
+<br/>
+<a href="counter" data-enhance-nave="false">data-enhance-nave=false</a>
+<br />
+<button @onclick="NavigateToCounter" class="btn btn-sm btn-primary">Navigate To Counter</button>
+<button @onclick="NavigateToWithForceLoad" class="btn btn-sm btn-dark">Navigate To Counter NavigateToWithForceLoad</button>
+<button @onclick="NavigateToWithReplace" class="btn btn-sm btn-sucess">Navigate To Counter NavigateToWithReplace</button>
+<button @onclick="Refresh" class="btn btn-sm btn-warning">Refresh</button>
+<button @onclick="NavigateToAbsoluteUri" class="btn btn-sm btn-warning">Navigate To AbsoluteUri</button>
+@code {
+
+    override protected void OnInitialized()
+    {
+        Console.WriteLine($"navigation base url :{navigationManager.BaseUri}");
+        Console.WriteLine($"navigation url :{navigationManager.Uri}");
+        Console.WriteLine($"navigation url :{navigationManager.ToBaseRelativePath(navigationManager.Uri)}");
+        navigationManager.LocationChanged += HandelNavigationLocationChangge;
+    }
+
+    private void NavigateToAbsoluteUri()
+    {
+        string newUri = "counter"; 
+        navigationManager.ToAbsoluteUri(newUri);
+    }
+
+    private void NavigateToCounter()
+    {
+        navigationManager.NavigateTo("counter");
+    }
+
+    private void NavigateToWithForceLoad()
+    {
+        navigationManager.NavigateTo("counter", forceLoad: true);
+    }
+
+    private void NavigateToWithReplace()
+    {
+        navigationManager.NavigateTo("counter", replace: true);
+    }
+
+    private void Refresh()
+    {
+        navigationManager.Refresh(forceReload:true);
+    }
+
+    private void HandelNavigationLocationChangge(object? sender, LocationChangedEventArgs e)
+    {
+        Console.WriteLine($"navigation url :{e.Location}");
+        Console.WriteLine($"navigation IsNavigationIntercepted :{e.IsNavigationIntercepted}");
+    }
+  
+}

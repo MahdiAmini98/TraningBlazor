@@ -1,0 +1,22 @@
+﻿@using static TraningBlazorProject.Client.Pages._5_49_Form.FormComponent
+<h3>NestDimensions</h3>
+@inherits Editor<Dimensions>
+
+<div class="form-group">
+    <label>Dimensions  محصول</label>
+    <div class="form-group">
+        <label>قد  محصول</label>
+        <InputNumber @bind-Value="Value.Height" class="form-control"/>
+    </div>
+    <div class="form-group">
+        <label>وزن  محصول</label>
+        <InputNumber @bind-Value="Value.Width" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>عمق  محصول</label>
+        <InputNumber @bind-Value="Value.Depth" class="form-control" />
+    </div>
+</div>
+@code {
+
+}

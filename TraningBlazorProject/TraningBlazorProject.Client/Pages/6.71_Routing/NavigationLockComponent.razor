@@ -1,0 +1,33 @@
+﻿<h3>NavigationLock</h3>
+@inject NavigationManager navigationManager
+@inject IJSRuntime JSRuntime
+@*
+    NavigationLock => این کامپوننت برای قفل کردن مسیریابی بین صفحات استفاده میشود
+            context.PreventNavigation(); => این متد برای قفل کردن مسیریابی بین صفحات استفاده میشود
+            اگر این متد صدا بزنیم دیگر کاربر نمی تواند به هیچ صفحه ای برود.
+            مثلا کاربر در فرمی اطلاعاتی وارد کرده
+            بعد میخواد به یک صفحه دیگر برود
+            میتوانیم صفحه را قفل کنیم و از آن سوال کنیم که آیا میخواهی اطلاعاتی که وارد کردی را ذخیره کنی یا نه
+            یا مثلا پیام دهیم که با جابه جایی شما تمام اطلاعات وارد شده حذف می شود
+
+            ConfirmExternalNavigation => برای آدرس های که خارج از برنامه ما هست
+            Confirm می گیرد
+*@
+
+<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" ConfirmExternalNavigation="false"></NavigationLock>
+<button class="btn btn-priamry" @onclick="NavigateToCounter">Go to counter</button>
+@code {
+    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        var isConfrm = await JSRuntime.InvokeAsync<bool>("confirm", "شما اطلاعات خود را ذخیره نکرده اید، آیا میخواهید صفحه را ترک کنید؟");
+        if (!isConfrm)
+        {
+            context.PreventNavigation();
+        }
+    }
+
+    private void NavigateToCounter()
+    {
+        navigationManager.NavigateTo("counter");
+    }
+}

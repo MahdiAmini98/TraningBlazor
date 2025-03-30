@@ -1,0 +1,55 @@
+﻿@namespace TraningBlazorProject.Client.Pages
+@typeparam TItem
+<table class="table table-responsive">
+    <thead class="thead-dark">
+        <tr>
+            @if (Header != null)
+            {
+                @Header
+            }
+            else
+            {
+                <th>No Data</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Data != null && Row != null)
+        {
+            foreach (var item in Data)
+            {
+                <tr>
+                    @Row(item)
+                </tr>
+            }
+        }
+
+    </tbody>
+    <tfoot>
+        <tr>
+            @if (Footer != null)
+            {
+                @Footer
+            }
+            else
+            {
+                <th>No Data</th>
+            }
+        </tr>
+    </tfoot>
+</table>
+
+@code {
+
+    [Parameter]
+    public RenderFragment Header { get; set; } = default!;
+
+    [Parameter]
+    public Microsoft.AspNetCore.Components.RenderFragment<TItem> Row { get; set; } = default!;
+
+    [Parameter]
+    public RenderFragment Footer { get; set; } = default!;
+
+    [Parameter]
+    public IReadOnlyList<TItem> Data { get; set; } = default!;
+}

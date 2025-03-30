@@ -1,0 +1,26 @@
+﻿<h3>ChildRenderingComponent</h3>
+<p>@ExampleParameter</p>
+@code {
+
+    [Parameter]
+    public int ExampleParameter { get; set; }
+    //این متد وقتی اجرا می شود که اولین بار کامپوننت رندر می شود
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("ChildComponent --> OnInitialized");
+    }
+
+    //این متدی است که بعد از رندر اجرا می شود
+    //firstRender = true => اولین بار است که رندر می شود
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Console.WriteLine("ChildComponent --> First Render");
+        }
+        else
+        {
+            Console.WriteLine("ChildComponent --> Re Render Triggered By StateHasChanged");
+        }
+    }
+}

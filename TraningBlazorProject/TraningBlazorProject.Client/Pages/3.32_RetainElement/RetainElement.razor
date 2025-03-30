@@ -1,0 +1,60 @@
+﻿@page "/RetainElement"
+
+<select class="form-control">
+    @foreach (var product in products)
+    {
+        <option value="@product.Name" @key="product">@product.Name</option>
+    }
+</select>
+
+
+<hr />
+
+@foreach (var product in products)
+{
+    <input value="@product.Name" @key="product" />
+}
+
+
+<hr />
+
+@foreach (var product in products)
+{
+    <button class="btn btn-info p-3" >@product.Name</button>
+}
+@code {
+    private System.Timers.Timer timer = new(3000);
+
+
+    protected override void OnInitialized()
+    {
+        timer.Elapsed += (sender, eventArgs) => OnTimerCallBack();
+        timer.Start();
+        base.OnInitialized();
+    }
+
+    private void OnTimerCallBack()
+    {
+        _ = InvokeAsync(() =>
+        {
+            products.Insert(0, new()
+                {
+                    Name = $"product - {Random.Shared.Next(1, 100)}"
+                });
+            StateHasChanged();
+        });
+    }
+    private readonly List<Product> products = new()
+    {
+        new(){Name = "لپ تاب"},
+        new(){Name = "موبایل"},
+        new(){Name = "ساعت"},
+        new(){Name = "هارد"},
+        new(){Name = "فنجان"}
+    };
+
+    public class Product
+    {
+        public string Name { get; set; } = default!;
+    }
+}

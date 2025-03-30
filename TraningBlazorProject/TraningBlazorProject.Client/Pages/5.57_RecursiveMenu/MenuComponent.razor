@@ -1,0 +1,37 @@
+﻿@page "/MenuComponent"
+@using TraningBlazorProject.Client.Pages._5._57_RecursiveMenu
+@rendermode InteractiveServer
+
+<EditForm Model="RootMenu" OnValidSubmit="HandelValidSubmit">
+    <div>
+        <h3>Main Menu</h3>
+    </div>
+
+    <MenuItemComponent Item="RootMenu" OnItemRemove="RemoveRootMenu"></MenuItemComponent>
+
+    <div class="mt-5 mb-5">
+        <button class="btn btn-primary btn-sm" type="submit">Submit</button>
+    </div>
+</EditForm>
+@code {
+    public MenuItem RootMenu { get; set; } = new() { Name = "Root Menu" };
+    private void HandelValidSubmit()
+    {
+        Console.WriteLine("-------------------------------");
+        Console.WriteLine($"Menu Submited: {RootMenu.Name}");
+        PrintMenu(RootMenu, 1);
+    }
+    private void RemoveRootMenu()
+    {
+        RootMenu = new() { Name = "Root Menu" };
+    }
+
+    private void PrintMenu(MenuItem menu, int level)
+    {
+        Console.WriteLine($"{new string('-', level)} {menu.Name}"); 
+        foreach (var child in menu.Children)
+        {
+            PrintMenu(child, level + 1);
+        }
+    }
+}

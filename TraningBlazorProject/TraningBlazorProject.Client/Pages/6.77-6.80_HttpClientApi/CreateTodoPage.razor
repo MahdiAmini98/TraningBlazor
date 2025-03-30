@@ -1,0 +1,68 @@
+﻿@page "/create-todo"
+@inject HttpClient Http
+@rendermode InteractiveWebAssembly
+
+<h3>Create To-Do</h3>
+
+<EditForm Model="newTodo" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+        <label for="title">Title:</label>
+        <InputText id="title" @bind-Value="newTodo.Title" placeholder="Enter task title..." />
+    </div>
+
+    <div>
+        <label for="isCompleted">Is Completed:</label>
+        <InputCheckbox id="isCompleted" @bind-Value="newTodo.IsCompleted" />
+    </div>
+
+    <button class="btn btn-success" type="submit">Create</button>
+
+</EditForm>
+
+
+<p class="@textColor">@statusMessage</p>
+
+
+@code {
+    private ToDoCreateDto newTodo = new ToDoCreateDto();
+    private string? statusMessage;
+    private string textColor;
+    private async Task HandleValidSubmit()
+    {
+        var json = System.Text.Json.JsonSerializer.Serialize(newTodo);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7244/api/Todo")
+            {
+                Content = content,
+            };
+
+
+
+        var response = await Http.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            statusMessage = "کار با موفقیت ثبت شد";
+            newTodo = new ToDoCreateDto();// reset form
+            textColor = "text-success";
+        }
+        else
+        {
+            statusMessage = $"Error: {response.StatusCode}";
+            textColor = "text-danger";
+
+        }
+
+
+    }
+
+    private class ToDoCreateDto
+    {
+        [Required]
+        public string Title { get; set; } = string.Empty;
+        public bool IsCompleted { get; set; }
+    }
+}

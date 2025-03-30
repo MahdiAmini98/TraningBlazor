@@ -1,0 +1,32 @@
+﻿@page "/ParentComponent"
+<h3>OverwritingParameter</h3>
+
+
+<ChildComponent ShowBody="true">
+    <ul>
+        <li>موبایل</li>
+        <li>تبلت</li>
+        <li>لپ تاب</li>
+        <li>خانه</li>
+    </ul>
+</ChildComponent>
+
+
+<ChildComponent ShowBody="false">
+    <ul>
+        <li>موبایل</li>
+        <li>تبلت</li>
+        <li>لپ تاب</li>
+        <li>خانه</li>
+    </ul>
+</ChildComponent>
+
+<button class="btn btn-primary" @onclick="RefreshPage">رفرش صفحه</button>
+@code {
+    public int RefreshCount { get; set; } = 1;
+
+    private void RefreshPage()
+    {
+        RefreshCount = +RefreshCount;
+    }
+}

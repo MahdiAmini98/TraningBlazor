@@ -1,0 +1,79 @@
+﻿@page "/CascadingParameter"
+@using TraningBlazorProject.Client.Pages._4._40_CascadingParameter
+
+
+@*
+    روش اول »
+    CascadingParameter = وقتی میخاهیم یک سری داده یا کلاسی را در کل برنامه بین همه کامپوننت ها یا بعضی از آن ها دسترسی داشته باشیم و به اشتراک بگذاریم
+    الان UserInfo
+  program.cs  در 
+  تعریف شده است و من میتوانم در همه کامپوننت ها از آن استفاده کنم
+*@
+<h3>CascadingParameter</h3>
+<p>@User.Name</p>
+<p>@UserName.UserName</p>
+
+
+
+@*
+    روش دوم »
+    CascadingValue = فرض کن میخاهیم چند 
+    theme 
+    به برنامه اضافه کنیم. نیاز است که مثلا وقتی تم دارک شد همه کامپوننت ها تم دارک بگیرند  و ما باید 
+    css 
+    های مربوط به تم دارک را به همه کامپوننت ها بفرستیم
+    برای این کار میتوانیم از 
+    CascadingValue
+    استفاده کنیم و برای انجام مثال آن 
+    بخشی از کد های آن را در 
+    mainLayout.razor نوشتم
+
+*@
+<button @onclick="ChangeTheme" class="btn btn-danger m-2">ChangeTheme</button>
+
+<div class="p-5" style="background-color:@ThemeInfo.BackgroundColor; color:@ThemeInfo.TextColor">
+    <h5>Theme</h5>
+    <p>
+        این کامپوننت از
+        CascadingValue و CascadingParameter
+        برای تغییر تم استفاده می کند
+    </p>
+    <button class="@ThemeInfo.BtnClass">Button</button>
+</div>
+@code {
+
+
+    //برخی کدهایش را در program.cs نوشتم
+    [CascadingParameter]
+    public UserInfo? User { get; set; }
+
+    [CascadingParameter(Name = "UserName")]
+    public UserInfo? UserName { get; set; }
+
+    [CascadingParameter]
+    public ThemeInfo? ThemeInfo { get; set; }
+
+    private void ChangeTheme()
+    {
+        if (ThemeInfo.IsDarkMode)
+        {
+            ThemeInfo = new ThemeInfo
+                {
+                    BtnClass = "btn btn-dark",
+                    BackgroundColor = "white",
+                    TextColor = "black",
+                    IsDarkMode = false
+                };
+        }
+        else
+        {
+            ThemeInfo = new ThemeInfo
+                {
+                    BtnClass = "btn btn-light",
+                    BackgroundColor = "black",
+                    TextColor = "white",
+                    IsDarkMode = true
+                };
+        }
+    }
+}

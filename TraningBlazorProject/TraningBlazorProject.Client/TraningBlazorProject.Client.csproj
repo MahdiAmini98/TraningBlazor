@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="9.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\5.49_Form\UploadFile\UploadForBlazorServer\" />
+  </ItemGroup>
+
 </Project>

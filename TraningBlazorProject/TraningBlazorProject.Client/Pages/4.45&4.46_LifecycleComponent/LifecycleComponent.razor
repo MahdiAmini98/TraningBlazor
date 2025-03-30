@@ -1,0 +1,105 @@
+﻿@page "/LifecycleComponent"
+<h3>LifecycleComponent</h3>
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@implements IDisposable
+
+@*
+    @rendermode @(new InteractiveServerRenderMode(prerender: false))
+کامپوننت ها وقتی صدا زده می شوند دو بار رندر می شوند
+در رندر اولیه کدهای خام html css  نمایش می دهد
+و در رندر دوم تعاملات و بقیه موارد
+این کمک می کند seo 
+بهتری داشته باشیم
+اگر 
+prerender: false
+باشد فقط یک بار رندر می شود
+-------------------------------
+تفاوت OnInitialized و OnInitializedAsync => اگر کاری انجام می دهیم که نیاز به انتظار ندارد از OnInitialized استفاده می کنیم
+و اگر کاری انجام می دهیم که نیاز به انتظار دارد از OnInitializedAsync استفاده می کنیم
+-------------------------------
+متد های OnParametersSetAsync و OnParametersSet => اگر کامپوننت ما پارامتر دارد از این دو متد استفاده می کنیم
+
+SetParametersAsync => اگر بخواهیم پارامتر ها را تغییر دهیم از این متد استفاده می کنیم
+زمانی که میخواهیم کنترل دقیقی روی ست شدن پارامترها داشته باشیم
+-------------------------------
+OnAfterRender و OnAfterRenderAsync => کامپوننت ها یک 
+رندر یا load 
+اولیه دارند که  با
+OnInitialized
+است بعد ار آن هر بار که کامپوننت لود یل رندر مجدد شد مثل
+وقتی که StateHaseChanged  صدا زده می شود
+این دو متد OnAfterRender و OnAfterRenderAsync 
+و هر جیزی که در صفحه تغییر کند که کامپوننت رندر شود
+-------------------------------
+ShouldRender => اگر بیخواهیم کنترل دقیقی روی رندر شدن داشته باشیم از این متد استفاده می کنیم
+هر بار که کامپوننتی رندر می شود  این متد 
+bool
+اگر true باشد رندر می شود
+ولی اگر false باشد رندر نمی شود
+-------------------------------
+IDisposable => اگر بخواهیم کاری را بعد از اتمام کامپوننت انجام دهیم از این اینترفیس استفاده می کنیم
+مثلا منابعی در کامپوننت استفاده کردیم مثل 
+Timer
+میخواهیم وقتی کامپوننت 
+Dispose شد و به یک صفحه دیگر رفت که از این کامپوننت استفاده نمی شود این منابع را رها کنیم
+ابتدا باید 
+@implements IDisposable
+کنیم 
+سپس یک متد دقیقا با نام
+Dispose بنویسیم
+و در آن منابع را رها کنیم
+*@
+
+
+@code {
+
+    override protected void OnInitialized()
+    {
+        Console.WriteLine("OnInitialized");
+    }
+
+    override protected async Task OnInitializedAsync()
+    {
+        Console.WriteLine("OnInitializedAsync");
+    }
+
+    override protected void OnParametersSet()
+    {
+        Console.WriteLine("OnParametersSet");
+    }
+
+    override protected async Task OnParametersSetAsync()
+    {
+        Console.WriteLine("OnParametersSetAsync");
+    } 
+
+    override public async Task SetParametersAsync(ParameterView parameters)
+    {
+        Console.WriteLine("OnParametersSetAsync");
+        base.SetParametersAsync(parameters);
+    }
+
+    override protected void OnAfterRender(bool firstRender)
+    {
+        Console.WriteLine("OnAfterRender");
+        base.OnAfterRender(firstRender);
+    }
+
+    override protected async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine("OnAfterRenderAsync");
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    override protected bool ShouldRender()
+    {
+        Console.WriteLine("ShouldRender");
+        return base.ShouldRender();
+    }
+
+    public void Dispose()
+    {
+        
+    }
+
+}

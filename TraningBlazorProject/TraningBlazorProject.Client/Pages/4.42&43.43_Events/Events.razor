@@ -1,0 +1,75 @@
+﻿@page "/events"
+<h3>Events</h3>
+
+@*Focus on Element*@
+<div class="form-group">
+    <label for="txtFocus">Focus on Element</label>
+    <input type="text" id="txtFocus" class="form-control" @ref="elementReferenceFocus" />
+    <button class="btn-link btn-priamary" @onclick="FocusOnElement">Focus On Input</button>
+</div>
+<hr />
+@*Propagation =>
+    یعنی وقتی ما المان های پرنت و چایلد داریم و روی یک المان کلیک میکنیم، اون کلیک به تمام المان های پرنت و چایلد ها منتقل میشه
+    از طریق @onclick:stopPropagation="true"
+    میتوانیم این رفتار را تغییر دهیم
+    به طوریکه وقتی روی div  
+    چایلد کلیک می کنیم
+    onclick 
+    div پرنت
+    صدا زده نشود
+و onclick های 
+پرنت و چایلد ادغام نشود
+*@
+
+<div class="p-5 bg-danger" @onclick="OnParentClick">
+        <h4>Parent</h4>
+        <br />
+        <br />
+    <div class="p-5 bg-warning" @onclick:stopPropagation="true" @onclick="OnChildClick">
+        <h4>Child</h4>
+        <br />
+        <br />
+    </div>
+</div>
+<h2>@message</h2>
+<hr />
+
+
+@*EventCallback =>
+
+از طریق EventCallback 
+میتوانییم رویدادها و event ها
+مثل @onclick 
+در المان عای کامپوننت child 
+را در کامپوننت parent
+مدیریت کنیم
+
+*@
+<TraningBlazorProject.Client.Pages._4_42_43_43_Events.EventCallBack.ParentEventCallBack>
+
+</TraningBlazorProject.Client.Pages._4_42_43_43_Events.EventCallBack.ParentEventCallBack>
+<hr />
+
+@code { 
+    @*Focus on Element*@
+
+    private ElementReference elementReferenceFocus;
+
+    private async Task FocusOnElement()
+    {
+        await elementReferenceFocus.FocusAsync();
+    }
+
+    @*Propagation*@
+
+    private string message;
+    private void OnParentClick()
+    {
+        message = "Parent Clicked";
+    }
+
+    private void OnChildClick()
+    {
+        message = "Child Clicked";
+    }
+}

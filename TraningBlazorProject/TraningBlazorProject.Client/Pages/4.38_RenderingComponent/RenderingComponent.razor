@@ -1,0 +1,52 @@
+﻿@page "/RenderingComponent"
+@rendermode InteractiveServer
+<h3>RenderingComponent</h3>
+@*
+    رندر مجدد کامپوننت ها
+    1- parameter update triggers
+    2- Cascading parameter change
+    3- Event Handler Exception
+    4- StateHasChanged - برای رندر مجدد کامپوننت ها استفاده می شود 
+    اگر چندین بار StateHasChanged را صدا بزنیم پشت سرم فقط یک بار اجرا می شود که پرفرمتس خوبی داشته باشد
+*@
+
+<h1>Counter</h1> 
+<hr />
+<ChildRenderingComponent ExampleParameter= "@CurrentCount"></ChildRenderingComponent>
+<hr />
+<p>current count:@CurrentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+@code {
+
+    private int CurrentCount { get; set; } = 0;
+    private void IncrementCount()
+    {
+        CurrentCount++;
+    }
+
+    //این متد وقتی اجرا می شود که اولین بار کامپوننت رندر می شود
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("OnInitialized"); 
+    }
+    //این متدی است که بعد از رندر اجرا می شود
+    //firstRender = true => اولین بار است که رندر می شود
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Console.WriteLine("First Render");
+        }
+        else
+        {
+            Console.WriteLine("Re Render Triggered By StateHasChanged");
+        }
+    }
+
+    // این متذ میتوانیم اعمال کنیم که کامپوننت رندر شود توسط  بلیزور یا نشود
+    protected override bool ShouldRender()
+    {
+        return base.ShouldRender();
+    }
+}

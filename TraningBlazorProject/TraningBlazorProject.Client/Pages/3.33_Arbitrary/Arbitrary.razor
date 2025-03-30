@@ -1,0 +1,8 @@
+﻿<h3>Arbitrary</h3>
+
+<button @attributes="AttributeDictionary">کلیک کنید</button>
+@code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public  Dictionary<string, object> AttributeDictionary { get; set; }
+
+}

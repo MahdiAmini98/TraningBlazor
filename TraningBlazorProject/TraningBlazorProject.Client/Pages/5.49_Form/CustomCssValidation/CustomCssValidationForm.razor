@@ -1,0 +1,67 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using TraningBlazorProject.Client.Common
+@using TraningBlazorProject.Client.Common.Class_Extensions
+@using TraningBlazorProject.Client.Pages._5._49_Form.CustomCssValidation
+<h3>CustomCssValidationForm</h3>
+
+<EditForm EditContext="editContext" OnValidSubmit="HandelSubmit">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    <div class="form-group">
+        <label>نام فرد</label>
+        <InputTextArea @bind-Value="User.Name" class="form-control" DisplayName="نام فرد" />
+    </div>
+
+    <div class="form-group">
+        <label>ملیت فرد</label>
+        <InputSelect @bind-Value="User.Nationality" class="form-control" DisplayName="ملیت فرد ">
+            <option value="" >انتخاب کنید</option>
+            @foreach (Nationality item in Enum.GetValues(typeof(Nationality)))
+            {
+                <option value="@item">@item.GetDisplayName()</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="form-group">
+        <label>خصوصیات فرد</label>
+        <InputTextArea @bind-Value="User.Characteristics" class="form-control" DisplayName="خصوصیات فرد" />
+    </div>
+    <button type="submit" class="btn btn-sm btn-primary mt-5 mb-5">Submit</button>
+
+</EditForm>
+
+@code {
+    private UserInfo User;
+    private EditContext editContext;
+    protected override void OnInitialized()
+    {
+        User = new UserInfo();
+        editContext ??= new EditContext(User);
+        editContext.SetFieldCssClassProvider(new BootstrapFieldClassProvider());
+    }
+    public class UserInfo
+    {
+        [Required(ErrorMessage = "نام فرد الزامی است")]
+        public string Name { get; set; } = default!;
+
+        [Required(ErrorMessage = "ملیت فرد الزامی است")]
+
+        public Nationality Nationality { get; set; }
+
+        [Required(ErrorMessage = "خصوصیات فرد الزامی است")]
+        public string Characteristics { get; set; } = default!;
+    }
+
+    public enum Nationality
+    {
+        Iran,
+        USA,
+        Canada,
+        Germany
+    }
+    private void HandelSubmit(EditContext args)
+    {
+        Console.WriteLine("Ok");
+    }
+}

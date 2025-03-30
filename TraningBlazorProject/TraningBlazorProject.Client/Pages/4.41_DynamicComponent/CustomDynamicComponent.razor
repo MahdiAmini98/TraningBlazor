@@ -1,0 +1,51 @@
+﻿@page "/CustomDynamicComponent"
+@using TraningBlazorProject.Client.Pages._4_41_DynamicComponent.Components
+<h3>DynamicComponent</h3>
+@* <DynamicComponent Type="@typeof(ElectricityBill)" />   
+<DynamicComponent Type="@typeof(GasBill)" />
+<DynamicComponent Type="@typeof(WaterBill)" />
+<DynamicComponent Type="@typeof(PhoneBill)" /> *@
+<div class="row">
+    <div class="col-md-8">
+        <select class="form-control" @onchange="ChangeSeleted">
+            <option value="">انتخاب کنید</option>
+            @foreach (var item in dataselect)
+            {
+                <option value="@item.Key">@item.Key</option>
+            })
+        </select>
+    </div>
+</div>
+
+@if (seletedType != null)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <DynamicComponent Type="seletedType" />
+        </div>
+    </div>
+}
+@code {
+    Dictionary<string, Type> dataselect = new Dictionary<string, Type>()
+    {
+            ["پرداخت قبض برق"] = typeof(ElectricityBill),
+            ["پرداخت قبض گاز"] = typeof(GasBill),
+            ["پرداخت قبض آب"] = typeof(WaterBill),
+            ["پرداخت قبض تلفن"] = typeof(PhoneBill)
+    };
+
+
+    private Type? seletedType;  
+    private void ChangeSeleted(ChangeEventArgs e)
+    {
+        if (e.Value is string seletedParameter && !string.IsNullOrEmpty(seletedParameter))
+        {
+            seletedType = dataselect[seletedParameter];
+        }
+        else
+        {
+            seletedType = null;
+        }
+    }
+}
+    

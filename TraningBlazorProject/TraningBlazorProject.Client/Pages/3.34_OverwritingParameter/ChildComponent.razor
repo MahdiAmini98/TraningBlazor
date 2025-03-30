@@ -1,0 +1,29 @@
+﻿<div @onclick="ShowCardDetails" class="card bg-light mb-3" style="width:300px;">
+    <div class="card-header">
+        <div class="card-title">نمایش جزییات</div>
+    </div>
+    <div class="card-body">
+        @if (InitiallyVisibale)
+        {
+            <div class="card-text">@ChildContent</div>
+        }
+    </div>
+</div>
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = default!;
+
+    [Parameter]
+    public bool ShowBody { get; set; }
+
+    public bool InitiallyVisibale;
+
+    protected override void OnInitialized()
+    {
+        ShowBody = InitiallyVisibale;
+    }
+    private void ShowCardDetails()
+    {
+        InitiallyVisibale = !InitiallyVisibale;
+    }
+}

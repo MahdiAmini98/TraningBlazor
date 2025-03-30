@@ -1,0 +1,9 @@
+﻿<h3>ChildEventCallBack</h3>
+
+<button class="btn btn-primary" @onclick="OnClickCallback">
+    یک متد از پدر اجرا کن
+</button>
+@code {
+    [Parameter]
+    public EventCallback OnClickCallback { get; set; }
+}
