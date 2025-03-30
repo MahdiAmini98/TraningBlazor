@@ -3,6 +3,9 @@ using TraningBlazorProject.Client.Pages;
 using TraningBlazorProject.Client.Pages._4._40_CascadingParameter;
 using TraningBlazorProject.Components;
 using TraningBlazorProject.Client.Services;
+using TraningBlazorProject.Repositories;
+using TraningBlazorProject.Client.Services.ProductServices;
+using TraningBlazorProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
-
 
 
 //4.40- CascadingParameter
@@ -26,7 +28,16 @@ ServicesExtensions.AddCommonServices(builder.Services);
 // 6.82 add shared services
 builder.Services.AddSharedServices();
 
+
+
+//6.85- add service
+builder.Services.AddSingleton<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ServerProductService>();
+
+
+
 builder.Services.AddHttpClient();
+
 
 var app = builder.Build();
 
@@ -52,5 +63,16 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(TraningBlazorProject.Client._Imports).Assembly).AddAdditionalAssemblies(typeof(TraningRCLProject._Imports).Assembly);
+
+
+
+//6.85
+
+app.MapGet("/api/products", (IProductRepository repository) =>
+{
+    return repository.GetProducts();
+
+}).WithName("GetProducts");
+
 
 app.Run();

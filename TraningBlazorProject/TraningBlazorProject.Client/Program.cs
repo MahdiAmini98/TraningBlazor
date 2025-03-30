@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using TraningBlazorProject.Client.Common.Services_Extensions;
 using TraningBlazorProject.Client.Services;
+using TraningBlazorProject.Client.Services.ProductServices;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 ServicesExtensions.AddCommonServices(builder.Services);
@@ -14,6 +15,11 @@ builder.Services.AddScoped(sp => new HttpClient());
 //});
 // 6.82 add shared services
 builder.Services.AddSharedServices();
+
+//6.85
+
+builder.Services.AddHttpClient<IProductService, ClientProductService>(client =>
+client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
 
 await builder.Build().RunAsync();

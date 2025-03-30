@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using System.Net.Http.Json;
 
-namespace TraningBlazorProject.Client.Services.TodoServices
+namespace TraningBlazorProject.Client.Services.NamedHttpClientPattern.TodoServices
 {
-    public interface ITodoService
+    public interface ITodoNamedService
     {
         Task<List<Todo>> GetAllTodosAsync();
         Task<Todo> GetTodoByIdAsync(int id);
@@ -14,11 +14,11 @@ namespace TraningBlazorProject.Client.Services.TodoServices
     }
 
 
-    public class TodoService : ITodoService
+    public class TodoNamedService : ITodoNamedService
     {
         private readonly IHttpClientFactory httpClientFactory;
 
-        public TodoService(IHttpClientFactory httpClientFactory)
+        public TodoNamedService(IHttpClientFactory httpClientFactory)
         {
             this.httpClientFactory = httpClientFactory;
         }

@@ -1,11 +1,11 @@
 ﻿@page "/NamedHttpClientPatternListTodos"
 @using Microsoft.AspNetCore.JsonPatch
-@using TraningBlazorProject.Client.Services.TodoServices
+@using TraningBlazorProject.Client.Services.NamedHttpClientPattern.TodoServices
 @rendermode InteractiveWebAssembly
 @attribute [StreamRendering]
 @inject NavigationManager Navigation;
 @inject IJSRuntime JSRuntime;
-@inject ITodoService TodoService
+@inject ITodoNamedService TodoService
 
 
 <h3>NamedHttpClientPatternListTodos</h3>

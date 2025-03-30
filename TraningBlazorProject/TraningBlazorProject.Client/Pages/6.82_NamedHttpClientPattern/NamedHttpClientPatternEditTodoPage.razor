@@ -1,10 +1,10 @@
 ﻿@page "/NamedHttpClientPatternEditTodoPage/{id:int}"
-@using TraningBlazorProject.Client.Services.TodoServices
+@using TraningBlazorProject.Client.Services.NamedHttpClientPattern.TodoServices
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @rendermode InteractiveWebAssembly
 @attribute [StreamRendering]
-@inject ITodoService TodoService
+@inject ITodoNamedService TodoService
 
 
 <h3>Edit To-Do</h3>

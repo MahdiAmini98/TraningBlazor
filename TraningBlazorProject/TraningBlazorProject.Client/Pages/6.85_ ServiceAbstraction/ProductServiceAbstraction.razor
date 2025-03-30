@@ -1,0 +1,99 @@
+﻿@page "/ProductServiceAbstraction"
+@using TraningBlazorProject.Client.Models
+@using TraningBlazorProject.Client.Services.ProductServices
+@inject IProductService ProductService
+@rendermode InteractiveWebAssembly
+
+<h3>ProductServiceAbstraction</h3>
+@*
+
+نکنه بسیار مهم :
+این روش برای وقتی هست که تمام سرویس ها و ریپوزیتوری های ما و منطق برنامه در 
+blazor server باشد
+و به جای پروژه  web api => TraningAPIProject
+بخاهیم همه این کارها را در 
+TraningBlazorProject
+انجام دهیم .
+منظور از api 
+داخلی یعنی 
+api به 
+TraningBlazorProject
+بزنیم که 
+blazor server است
+
+    Service Abstraction
+    وقتی ما یک api خارجی 
+    را میخواهیم صدا بزنیم
+    میتوانستیم از روش های 
+    مختلف http client 
+    استفاده کنیم
+    ولی وقتی پروژه api 
+    درون خود solution 
+    برنامه ما هست و 
+    api های ما دست خود ما هست و
+    api های ما درون برنامه و داخلی هست
+    اگر از روش های مختلف http client
+    که در قبل آموزش دیدیم استفاده کنیم 
+    دو بار api انجام میشود
+    یک بار سمت سرور
+     که سرور ما خودش به صورت اتوماتیک خودش را صدا میزند 
+     به علت prerender
+    و بار دوم سمت کلاینت
+    که خب طبیعی هست که باید فقظ سمت کلاینت صدا زده شود
+    حالا چرا درون سرور خود سرور خودش را صدا میزند
+   بخاطر اینکه در 
+   service Registration
+        services.AddHttpClient<ITodoTypedService, TodoTypedService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7215/api/NamedHttpClientPatternTodo");
+            });
+            داریم 
+            و این کد در 
+            program.cs سمت 
+            سرور اتفاق می افتد
+            پس ما باید از طریق روش
+            Service Abstraction
+            این مشکل را حل کنیم
+            و پیاده  سازی سمت سرور و سمت کلاینت جدا کنیم
+            و پیاده سازی سمت سرور را مستقیم از repository
+            انجام دهیم
+            و سمت کلاینت از طریق http client
+
+            ابتدا productRepository 
+            سمت server مینویسیم و
+            در program.cs سمت 
+            سرور سرویسش اضافه می کنیم
+            و سپس ProductService
+            سمت کلاینت مینویسیم
+            و در program.cs سمت کلاینت سرویسش را اضافه میکنیم
+            کلاس ServerProductService سمت سرور
+            و در program.cs سمت سرور سرویسش را اضافه میکنیم
+
+*@
+
+<h3>Product List</h3>
+
+@if (products == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+        @foreach (var product in products)
+        {
+            <li>@product.Name - $@product.Price</li>
+        }
+    </ul>
+}
+
+@code {
+    private List<ProductDto>? products;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await ProductService.GetProductsAsync();
+    }
+
+}

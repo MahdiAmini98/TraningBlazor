@@ -1,4 +1,5 @@
-﻿using TraningBlazorProject.Client.Services.TodoServices;
+﻿using TraningBlazorProject.Client.Services.NamedHttpClientPattern.TodoServices;
+using TraningBlazorProject.Client.Services.TypedHttpClientPattern.TodoServices;
 
 namespace TraningBlazorProject.Client.Services
 {
@@ -10,8 +11,14 @@ namespace TraningBlazorProject.Client.Services
             {
                 client.BaseAddress = new Uri("https://localhost:7215/api/NamedHttpClientPatternTodo/");
             });
-            services.AddScoped<ITodoService, TodoService>();
+            services.AddScoped<ITodoNamedService, TodoNamedService>();
 
+            //6.83 typed http client pattern
+            services.AddScoped<ITodoTypedService, TodoTypedService>();
+            services.AddHttpClient<ITodoTypedService, TodoTypedService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7215/api/NamedHttpClientPatternTodo");
+            });
             return services;
         }
     }
