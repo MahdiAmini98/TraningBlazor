@@ -43,7 +43,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync($"https://localhost:7800/api/Todo/{id}");
+        var response = await Http.GetAsync($"https://localhost:7215/api/Todo/{id}");
         if (response.IsSuccessStatusCode)
         {
             var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -68,7 +68,7 @@ else
 
         var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-        var requestUri = $"https://localhost:7800/api/Todo/{id}";
+        var requestUri = $"https://localhost:7215/api/Todo/{id}";
         var response = await Http.PutAsync(requestUri, httpContent);
         if (response.IsSuccessStatusCode)
         {

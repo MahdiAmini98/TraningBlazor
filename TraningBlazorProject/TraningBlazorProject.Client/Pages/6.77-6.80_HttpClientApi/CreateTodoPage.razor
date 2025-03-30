@@ -34,7 +34,7 @@
         var json = System.Text.Json.JsonSerializer.Serialize(newTodo);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7244/api/Todo")
+        var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7215/api/Todo")
             {
                 Content = content,
             };

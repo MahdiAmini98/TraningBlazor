@@ -61,7 +61,7 @@ else
     private List<Todo>? todos;
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync("https://localhost:7244/api/Todo");
+        var response = await Http.GetAsync("https://localhost:7215/api/Todo");
 
         if (response.IsSuccessStatusCode)
         {
@@ -95,7 +95,7 @@ else
 
     private async Task DeleteTodo(int id)
     {
-        var requestUri = $"https://localhost:7244/api/Todo/{id}";
+        var requestUri = $"https://localhost:7215/api/Todo/{id}";
 
         var request = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 
@@ -129,7 +129,7 @@ else
 
 
 
-        var request = new HttpRequestMessage(HttpMethod.Patch, $"https://localhost:7244/api/Todo/{id}")
+        var request = new HttpRequestMessage(HttpMethod.Patch, $"https://localhost:7215/api/Todo/{id}")
             {
                 Content = jsonContent,
             };
