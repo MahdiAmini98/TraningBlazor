@@ -7,11 +7,11 @@ namespace TraningAPIProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TodoController : ControllerBase
+    public class PatchTodoController : ControllerBase
     {
         private readonly ITodoRepository _repository;
 
-        public TodoController(ITodoRepository repository)
+        public PatchTodoController(ITodoRepository repository)
         {
             _repository = repository;
         }

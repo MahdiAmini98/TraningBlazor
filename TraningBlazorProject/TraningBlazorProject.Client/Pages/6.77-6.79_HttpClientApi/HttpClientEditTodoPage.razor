@@ -16,7 +16,7 @@
 }
 else
 {
-    <EditForm Model="todo" class="mt-3" OnValidSubmit="UpdateTodo" >
+    <EditForm Model="todo" class="mt-3" OnValidSubmit="UpdateTodo">
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
             <InputText id="title" class="form-control" @bind-Value="todo.Title" />
@@ -43,7 +43,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync($"https://localhost:7215/api/Todo/{id}");
+        var response = await Http.GetAsync($"https://localhost:7215/api/HttpClientTodo/{id}");
         if (response.IsSuccessStatusCode)
         {
             var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -68,7 +68,7 @@ else
 
         var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-        var requestUri = $"https://localhost:7215/api/Todo/{id}";
+        var requestUri = $"https://localhost:7215/api/HttpClientTodo/{id}";
         var response = await Http.PutAsync(requestUri, httpContent);
         if (response.IsSuccessStatusCode)
         {

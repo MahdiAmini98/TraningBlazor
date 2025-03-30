@@ -1,4 +1,6 @@
-﻿@page "/create-todo"
+﻿@page "/HttpClientCreateTodoPage"
+@using System.Text.Json
+
 @inject HttpClient Http
 @rendermode InteractiveWebAssembly
 
@@ -31,10 +33,10 @@
     private string textColor;
     private async Task HandleValidSubmit()
     {
-        var json = System.Text.Json.JsonSerializer.Serialize(newTodo);
+        var json = JsonSerializer.Serialize(newTodo);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7215/api/Todo")
+        var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7215/api/HttpClientTodo")
             {
                 Content = content,
             };

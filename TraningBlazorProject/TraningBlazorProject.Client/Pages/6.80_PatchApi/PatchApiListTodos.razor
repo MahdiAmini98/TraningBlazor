@@ -1,10 +1,33 @@
-﻿@page "/ListTodos"
+﻿@page "/PatchApiListTodos"
 @using Microsoft.AspNetCore.JsonPatch
 @inject HttpClient Http
 @rendermode InteractiveWebAssembly
 @attribute [StreamRendering]
 @inject NavigationManager Navigation;
 @inject IJSRuntime JSRuntime;
+
+@*
+    patch => بعضی اوقات ما یک یا چند فیلد از یک مدل را می‌خواهیم بروزرسانی کنیم و نه کل مدل را
+    مثلا میخواهیم یک bool را 
+    مقدارش را ویرایش کنیم
+    در این صورت نیاز است کل مدل را get
+    کنیم
+    سپس یک فیلد را ویرایش کنیم
+    دوباره کل مدل را بفرستیم و 
+    Edit کنیم
+    در این موارد 
+    Patch
+     به کار می‌رود
+     Patch دقیقا همان فیلد مورد  نظر ویرایش می کند
+        و نه کل مدل را
+        و این خیلی مهمه
+        ابتدا باید پکیج 
+        jsonpatch  نصب کنیم , newtonsoft.json نصب کنیم
+        نکته خیلی مهم: اصلا پکیج newtonsoft.json در سمت
+        پروژه  blazor client نصب نشود
+        چون در این صورت مشکلاتی پیش می‌آید و کل پروژه باید از اول بنویسی
+
+*@
 
 <h3>To-Do List</h3>
 
@@ -61,7 +84,7 @@ else
     private List<Todo>? todos;
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync("https://localhost:7215/api/Todo");
+        var response = await Http.GetAsync("https://localhost:7215/api/PatchTodo");
 
         if (response.IsSuccessStatusCode)
         {
@@ -95,7 +118,7 @@ else
 
     private async Task DeleteTodo(int id)
     {
-        var requestUri = $"https://localhost:7215/api/Todo/{id}";
+        var requestUri = $"https://localhost:7215/api/PatchTodo/{id}";
 
         var request = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 
@@ -129,7 +152,7 @@ else
 
 
 
-        var request = new HttpRequestMessage(HttpMethod.Patch, $"https://localhost:7215/api/Todo/{id}")
+        var request = new HttpRequestMessage(HttpMethod.Patch, $"https://localhost:7215/api/PatchTodo/{id}")
             {
                 Content = jsonContent,
             };
