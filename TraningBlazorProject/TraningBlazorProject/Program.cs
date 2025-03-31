@@ -11,8 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveServerComponents().AddCircuitOptions(options =>
+    {
+        options.DetailedErrors = true;
+    }).AddInteractiveWebAssemblyComponents();
+
 
 
 //4.40- CascadingParameter

@@ -1,0 +1,599 @@
+﻿@page "/JavascriptComponent"
+@using TraningBlazorProject.Client.Pages._7._89_Javascript
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+<h3>JavascriptComponent</h3>
+@*
+    ما میتوانیم از کدهای js 
+    در blazor استفاده کنیم
+    برای استفاده از js باید
+    @inject IJSRuntime JS
+
+    در کامپوننت اضافه کنیم
+    و از دو متد
+    InvokeVoidAsync و
+    InvokeAsync
+    استفاده کنیم
+    اگر متد جاوا اسکریپت که نوشتیم خروجی نداشت از
+    InvokeVoidAsync
+    و اگر خروجی داشت از 
+    InvokeAsync
+    استفاده می کنیم
+    هدف از کلاس
+    AlertInterop
+    این است که بتوانیم متدهای جاوا اسکریپت که نوشتیم را در چندین کامپوننت استفاده گنیم
+    وگرنه می توانستیم همین کد ها را در همین صفحه بنویسیم
+
+    --------------------------------------------------------
+    7.90
+    گاهی وقتا نیازه که یک المان html
+    مثل یک input بگیریم
+    و روی رویداد های مختلف آن کاری را انجام دهیم
+    مثلا در جاوا اسکریپت به صورت زیر مینوشیتم
+    onclick(this);
+    کلمه this که باهاش 
+    المان می گرفتیم در واقع همان
+    @ref هست
+    که در blazor دارم
+    --------------------------------------------------------
+    7.91
+    روش های بارگزاری جاوا اسکریپت در کامپوننت و پروژه بلیزور
+    1- ساده ترین روش اینکه کدهای js به همین صورت در کامپوننت بنویسیم
+    2- در یک فایل js در
+    www.rooot پروژه بنویسیم و در
+    App.razor
+    به صورت
+        <script src="@Assets["TraningBlazorProject.styles.js"]"></script>
+        رفرنس دهبم
+    3- ما برای اینکه برای هر کامپوننت یک فایل css
+    جدا می ساختیم به صورت
+    Home.razor.css 
+    یک فایل css 
+    برای آن کامپوننت ایجاد می کردیم
+    حالا برای js هر کامپوننت
+    میتوانیم به صورت
+      Home.razor.js
+      بنویسیم و کدهای 
+      js آن کامپوننت بنویسیم
+      و آن را به صورت
+      <script src="Components/Pages/Home.razor.js" defer> </script>
+در کامپوننت رفرنس می دهیم
+defer => اگر بنویسیم
+js های ما وقتی که
+همه چیز لود شد لود می شود
+  4- یک روش
+  فوق العاده که بلیزور ارایه کرده این است که میتوانیم
+  قبل از اینکه بلیزور اجرا شود یا بعد از اینکه بلیزور اجرا شد کد های
+  js  که
+  میخواهیم را اجرا کنیم
+  یعنی قبل از ایتکه برنامه اجرا شود می توانیم یک سری کارها را انجام دهیم
+  و بعد از آن هم که اجرا شد می توانیم یکسری کارهای دیگر انجام دهیم
+  برای اینکار در
+  www.root در 
+  پوشه js
+  یک فایل js ایجاد می کنیم
+  که نام آن فایل باید از الگوی زیر باشد
+  [نام پروژه].lib.module.js
+  مثلا برای این پروژه می شود
+  TraningBlazorProject.lib.module.js
+
+حالا داخل این متد که ساختیم دو تا متد با نام های زیر باید بنویسیم
+export function beforeServerStart() {
+    //
+
+    var script = document.createElement('script');
+    script.src = 'js/beforeStartScript.js';
+    document.head.appendChild(script);
+   console.log("beforeServerStart لود شد");
+}
+
+export function afterServerStarted(balzor) {
+    //
+    var script = document.createElement('script');
+    script.src = 'js/afterStartedScript.js'; 
+    document.head.appendChild(script);
+    console.log("afterStartedScript.js لود شد");
+
+}
+
+که متد beforeServerStart 
+وقتی اجرا می شود که برنامه اجرا نشده و 
+متد afterServerStarted بعد از اجرای برنامه اجرا می شود
+-------------------------------------------------------------
+7.92
+میتونیم متدهای جاوا اسکریپت به صورت ماژول بنویسیم و از آن استفاده کنیم
+کد خود را به صورت ماژول می نویسیم
+ابتدا یک فایل JS میسازیم
+با هر اسمی که میخواهیم
+مثلا
+modular.js
+و متد هایی که درون ان مینویسیم به صورت
+export 
+مینویسیم
+export function showAlert(message) {
+    alert(message);
+}
+
+سپس یک
+        private IJSObjectReference? jsModule;
+تعریف می کنیم
+که این ماژول ها را به صورت ایزوله برایمان لود می کند
+
+-------------------------------------------------------------
+7.93
+گاهی نیاز است که از دات نت داده ها را بگیریم و برای جاوا اسکپریپت ارسال کنیم
+مشکل اینکه وقتی داده های زیادی داشته باشیم
+این کار خیلی کند صورت می گیره
+راه حلش اینکه از stram 
+برای ارسال داده استفاده کنیم
+چون stram  هم
+در جاوا اسکریپت هم دات نت ساپورت می شود
+حالا من این کار به سه روش 
+معمول
+stram
+Chunk stream 
+انجام میدهم
+که Chunk stream 
+داده ها را به شکل یک جریانی از تکه های پازل و به صورت زنجیر وار داده ها را میفرسته که سرعتش خیلی بیشتر دو روش اول است
+ابتدا فابل
+streamhandler.js
+می سازیم
+
+
+
+می توانیم داده ها را از جاوا اسکریپت نیز به دات نت با 
+stream ارسال کنیم
+که برای این کار فیلم
+آخر فصل 7 ببین
+من این فیلم را پیاده نکردم
+
+---------------------------------------------------------------------
+7.94
+وقتی ما از جاوا اسکریپن استفاده می کنیم به دلیل سیستم 
+diffing 
+بلیزور
+هم جاوا اسکریپت و هم بلزور
+میخاهند 
+DOM 
+html  را تغییر دهند
+و این باعث اختلال ها و ناهماهنگی ها می شود
+
+سیستم diffing 
+بیزور اینجوریه که وقتی ما با بلیزور میخواهیم 
+DOM  را تغییر دهیم
+DOM جدید را
+با DOM قدیم
+مقایسه می کند و 
+Replace می کند
+حالا اگر جاوا اسکریپت هم جداگانه بخاهد
+DOM را تغییر دهد
+ممکن است با اخلال مواجه شویم
+حالا فرض کن ما با استفاده از کتابخانه هایی در جاوا اسکیریپت بخاهیم کاری را  انجام دهیم
+این کتابخانه ها با کلی متد می توانند تغییراتی در DOM
+ایجاد کنند که به چشم ما نیاید ولی باعث اخلال شوند
+راهکار این است که 
+آن تگی که میخواهیم در آن از کتابخانه های جاوا اسکیریت استفاده کنیم
+را به جاوا اسکریپت رفرنس دهیم
+تا  دیگه بلیزور به آن تگ کاری نداشته باشه و محتویات آن تگ توسط جاوا اسکریپت در صفحه رندر شود و تغییر کند
+در  این مثال میخواهیم نقشه نشان را در یک تگ
+div 
+نمایش دهیم و از این روش که گفتم استفاده می کنیم
+در مثال پایین ما div
+مورد نظر
+@ref="mapElement"
+دادیم و mapElement را 
+به جاوا اسکریپت دادیم
+که فقط به
+جاوا اسکریپت رفرنس داشته باشد
+بقیه موارد نیز 
+مربوط به کتابخانه نشان است
+-----------------------------------------------------------------
+7.95
+نحوه اجرا کردن کدهای سی شارپ سمت جاوا اسکریپت
+متدهای دات نت در جاوا اسکریپت
+متد سی شارپ حتما باید
+public static
+باشد
+حتما اتریبیت
+JSInvokable
+داشته باشد
+در فایل 
+netscript.js 
+که برای این بخش نوشتیم
+حتما باید از کلمه کلیدی
+DotNet
+استفاده کنیم برای صدا زدن متد های دات نت
+نام فایل netscript.js 
+میتواند هر نامی باشد
+DotNet دو متد دارد
+invokeMethodAsync
+این متد برای 
+interactiveserver 
+است
+invokeMethod برای
+interactivewebasswembly
+که
+ DotNet.invokeMethodAsync("TraningBlazorProject", "myAddNumber", a, b)
+ ورودی هایش 
+ TraningBlazorProject اسمبلی پروژه هست
+ myAddNumber نام متد سی شارپ هست
+  a, b ورودی های متد سی شارپ است
+  و خروجی
+  invokeMethodAsync
+   متدها 
+   promice java script 
+   هست
+   متد های پرامیس در جاوا اسکریپت
+
+   نکته مهم:
+   .AddCircuitOptions(options =>
+    {
+        options.DetailedErrors = true;
+    })
+    با اضافه کردن کد بالا در 
+    
+    program.cs
+    میتوانیم خطاهای js 
+    در کنسول مرورگر را
+    با جزییات بیشتری ببینیم
+
+
+    کدهای سی شارپ میتوانیم میتوانیم از متدهای 
+    غیر استاتیک 
+    و جنریک نیز به 
+    js 
+    ارسال کنیم که من این قسکت ها  را ننوشتم وباید فیلمش ببینی
+    ----------------------------------------------------------------------
+    *@
+
+<button class="btn btn-danger" @onclick="GetError">   Error</button>
+<button class="btn btn-primary" @onclick="ShowAlert">Show Alert</button>
+<button class="btn btn-info" @onclick="ShowAlert2">Show Alert AlertInterop class</button>
+<hr />
+
+
+<p>سن خود را وارد کنید و روی "بررسی" کلیک کنید :</p>
+
+<input class="form-control" type="number" @bind="userAge" placeholder="Enter your age..." />
+<button class="btn btn-dark" @onclick="EvaluateAge">بررسی</button>
+@if (!string.IsNullOrEmpty(result))
+{
+    <p>Result : <strong>@result</strong></p>
+}
+
+<script>
+    window.showAnimatedAlert=(message)=>{
+
+    const alertDiv=document.createElement("div");
+    alertDiv.textContent=message;
+    alertDiv.style.position = "fixed";
+    alertDiv.style.bottom = "20px";
+    alertDiv.style.right = "20px";
+    alertDiv.style.padding = "10px";
+    alertDiv.style.backgroundColor = "#007bff";
+    alertDiv.style.color = "white";
+    alertDiv.style.borderRadius = "5px";
+    alertDiv.style.boxShadow = "0px 4px 6px rgba(0,0,0,0.1)";
+    alertDiv.style.transition = "opacity 0.5s ease-out";
+
+    document.body.appendChild(alertDiv);
+
+
+    setTimeout(()=>{
+    alertDiv.style.opacity="0";
+    setTimeout(()=>  document.body.removeChild(alertDiv),500);
+    },1500);
+    }
+
+    //---------------------
+
+    window.evaluateAge=(age)=>{
+    if(age < 18)
+    {
+    return "شما جوان هستید.";
+    }
+    else if (age <= 60)
+    {
+    return "شما یک بزرگسال هستید.";
+    }
+    else{
+    return "شما یک سالمند هستید.";
+    }
+    }
+</script>
+
+<hr/>
+
+
+@*   7.90 *@
+<input @ref="inputElm" placeholder="Type something here..." />
+<button @onclick="FillInput">Fill Input</button>
+<button @onclick="DisableInput">Disable Input</button>
+<button @onclick="EnableInput">Enable Input</button>
+
+<script>
+    window.interopFunctions = {
+
+    fillInput (element, text) {
+    element.value = text;
+    },
+
+    disableInput  (element) {
+    element.disabled = true;
+    },
+    enableInput  (element) {
+    element.disabled = false;
+    }
+    };
+</script>
+
+<hr />
+@* 7.92 *@
+
+<button class="btn btn-primary" @onclick="ShowAlertJsMudule">  Show Alert JsMudule </button>
+
+
+@* load sweet alert *@
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+
+@if (isSweetAlertLoaded)
+{
+    <br />
+    <button class="btn btn-success mt-2" @onclick="ShowSweetAlert">نمایش پیغام</button>
+    <p>نتیجه آخرین پیغام: @alertResult</p>
+}
+
+
+<hr/>
+@* 7.93 *@
+<script src="./js/streamhandler.js"></script>
+<h3>Stream Example</h3>
+
+<button class="btn btn-warning" @onclick="SendAsText">Send as Text</button>
+<button class="btn btn-primary" @onclick="SendDataArrayBuffer ">Send as Stream ArrayBuffer</button>
+<button class="btn btn-success" @onclick="SendAsStream ">Send as Stream  </button>
+
+<hr/>
+@* 7.94*@
+ 
+
+<HeadContent>
+    <link rel="stylesheet" href="https://static.neshan.org/sdk/leaflet/v1.9.4/neshan-sdk/v1.0.8/index.css" />
+    <script src="https://static.neshan.org/sdk/leaflet/v1.9.4/neshan-sdk/v1.0.8/index.js"></script>
+
+</HeadContent>
+
+<div style="width:800px; height:400px; border: 4px solid;" @ref="mapElement"></div>
+
+
+<p>
+    <button class="btn btn-primary" @onclick="() => ShowLocationAsync(35.699756, 51.338076)">نمایش تهران</button>
+    <button class="btn btn-secondary" @onclick="() => ShowLocationAsync(34.7989, 48.5146)">نمایش همدان</button>
+    <button class="btn btn-success" @onclick="() => ShowLocationAsync(29.591768, 52.583698)">نمایش شیراز</button>
+</p>
+
+
+<hr />
+@*7.95*@
+<script src="./js/netscript.js"></script>
+<button class="btn btn-danger" onclick="calculateSum(3,4)">Calculate Sum</button>
+
+@code{
+    //general code
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //7.92
+
+            jsMudule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/modular.js");
+
+            //7.94
+            mapModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/neshanMapComponent.js");
+
+            mapInstance = await mapModule.InvokeAsync<IJSObjectReference>("initializeMap", mapElement, apiKey);
+        }
+    }
+}
+@code
+{
+    private AlertInterop? alertInterop;
+
+    protected override void OnInitialized()
+    {
+        alertInterop = new AlertInterop(JS);
+    }
+
+    private async Task GetError()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("showA", "سلام از جاوااسکریپت!");
+        }
+        catch (JSException ex)
+        {
+
+            throw;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+
+    }
+
+
+    private async Task ShowAlert()
+    {
+        await JS.InvokeVoidAsync("showAnimatedAlert", "سلام از جاوااسکریپت!");
+    }
+
+    private async Task ShowAlert2()
+    {
+        await alertInterop.ShowAnimatedAlert("سلام از جاوااسکریپت! استفاده از کلاس AlertInterop");
+    }
+
+
+    private int userAge;
+    private string? result;
+
+    private async Task EvaluateAge()
+    {
+        if (userAge > 0)
+        {
+            result = await JS.InvokeAsync<string>("evaluateAge", userAge);
+        }
+    }
+
+}
+@code{
+
+    //    7.90
+
+    private ElementReference inputElm;
+
+    private async Task FillInput()
+    {
+        await JS.InvokeVoidAsync("interopFunctions.fillInput", inputElm, "this is a text");
+    }
+
+    private async Task DisableInput()
+    {
+        await JS.InvokeVoidAsync("interopFunctions.disableInput", inputElm);
+    }
+    private async Task EnableInput()
+    {
+        await JS.InvokeVoidAsync("interopFunctions.enableInput", inputElm);
+    }
+
+}
+@code{
+        //7.92
+    private IJSObjectReference? jsMudule;
+
+
+
+    private async Task ShowAlertJsMudule()
+    {
+        if (jsMudule is not null)
+        {
+            await jsMudule.InvokeVoidAsync("showAlert", " سلام از بلیزور ارسال شده است.");
+        }
+    }
+
+
+    ////load Sweet Alert
+
+    private int currentCount = 0;
+    private IJSObjectReference? sweetAlertModule;
+    private bool isSweetAlertLoaded = false;
+    private string? alertResult;
+
+    private async Task IncrementCount()
+    {
+        currentCount++;
+        if (currentCount == 3)
+        {
+            sweetAlertModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/modular.js");
+
+            if (sweetAlertModule is not null)
+            {
+                await sweetAlertModule.InvokeVoidAsync("loadSweetAlert");
+                isSweetAlertLoaded = true;
+            }
+        }
+    }
+
+
+    private async Task ShowSweetAlert()
+    {
+        if (isSweetAlertLoaded && sweetAlertModule is not null)
+        {
+            alertResult = await sweetAlertModule.InvokeAsync<string>("showSweetAlert", " آیا تایید میکنید؟");
+        }
+    }
+}
+@code{
+    //7.93
+
+    //روش اول - ارسال داده به صورت ساده
+    private async Task SendAsText()
+    {
+        var textData = "";
+        for (int i = 0; i < 20_000; i++)
+        {
+            textData += $"This is line {i}\n";
+        }
+        await JS.InvokeVoidAsync("receiveRawData", textData);
+    }
+
+    //روش دوم - ارسال داده با stream
+    private async Task SendDataArrayBuffer()
+    {
+        var streamContent = new MemoryStream();
+        var writer = new StreamWriter(streamContent);
+
+        for (int i = 0; i < 200_000; i++)
+        {
+            await writer.WriteAsync($"This is line {i}\n");
+        }
+        await writer.FlushAsync();
+        streamContent.Position = 0;
+
+        var streamRef = new DotNetStreamReference(streamContent, leaveOpen: false);
+
+        await JS.InvokeVoidAsync("receiveStreamAsArrayBuffer", TimeSpan.FromMinutes(5), streamRef);
+
+    }
+
+    //روش سوم - ارسال داده به روش chunk stram 
+    private async Task SendAsStream()
+    {
+        var streamContent = new MemoryStream();
+        var writer = new StreamWriter(streamContent);
+
+        for (int i = 0; i < 5_000_000; i++)
+        {
+            await writer.WriteAsync($"This is line {i}\n");
+        }
+        await writer.FlushAsync();
+        streamContent.Position = 0;
+
+        var streamRef = new DotNetStreamReference(streamContent, leaveOpen: false);
+
+        await JS.InvokeVoidAsync("receiveStreamAsChunks", streamRef);
+
+    }
+}
+@code{
+    //7.94
+    private ElementReference mapElement;
+    private IJSObjectReference? mapModule;
+    private IJSObjectReference? mapInstance;
+
+
+    private const string apiKey = "web.a25de509ef12447f8942312e93392104";
+
+    private async Task ShowLocationAsync(double latitude, double longitude)
+    {
+        if (mapModule is not null && mapInstance is not null)
+        {
+            await mapModule.InvokeVoidAsync("setMapCenter", mapInstance, latitude, longitude);
+        }
+    }
+}
+@code{
+    //7.95
+    [JSInvokable("myAddNumber")]
+    public static Task<int> AddNumber(int a, int b)
+    {
+        return Task.FromResult(a + b);
+    }
+}
