@@ -1,0 +1,84 @@
+﻿@page "/StreamRendering"
+<h3>StreamRendering</h3>
+@*
+    StreamRendering => به ما کمک 
+    می کند که اگر دیتایی را از دیتابیس می گیرم
+    مثلا لیست محصولاتی
+    و در صفحه به کاربر نمایش می دهیم
+    ممگنه چند میلی ثانیه طول بکشه که دیتا نمایش داده بشه
+    برای اینکه کاربر حس خوبی داشته باشه
+    اون چند میلی ثانیه
+    یک 
+    placeholder 
+    یا چیزی نشون کاربر بدهیم
+    که روان بودن پروژه به کاربر نمایش دهیم
+    برای اینکار ما باید
+    @attribute [StreamRendering]
+    اضافه کنیم
+    و اگر
+    forecasts == null
+    بود 
+    یعنی داده نیامده و 
+    StreamRendering اعمال می شود
+
+*@
+
+@attribute [StreamRendering]
+
+<p>This component demonstrates showing data.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th aria-label="Temperature in Celsius">Temp. (C)</th>
+                <th aria-label="Temperature in Farenheit">Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private WeatherForecast[]? forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Simulate asynchronous loading to demonstrate a loading indicator
+        await Task.Delay(2000);
+
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
+        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            {
+                Date = startDate.AddDays(index),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = summaries[Random.Shared.Next(summaries.Length)]
+            }).ToArray();
+    }
+
+    private class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+        public int TemperatureC { get; set; }
+        public string? Summary { get; set; }
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}
