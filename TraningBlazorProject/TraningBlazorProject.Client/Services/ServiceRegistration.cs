@@ -19,6 +19,9 @@ namespace TraningBlazorProject.Client.Services
             {
                 client.BaseAddress = new Uri("https://localhost:7215/api/NamedHttpClientPatternTodo");
             });
+
+
+            //8.
             return services;
         }
     }

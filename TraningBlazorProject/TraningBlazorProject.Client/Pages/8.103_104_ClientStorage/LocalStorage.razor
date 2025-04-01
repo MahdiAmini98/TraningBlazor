@@ -1,0 +1,142 @@
+﻿@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@inject IJSRuntime JSRuntime
+
+<h3>فرم   Local Storage</h3>
+
+<EditForm EditContext="editContext" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+        <label for="firstName">نام:</label>
+        <InputText id="firstName" @bind-Value="model.FirstName" />
+        <ValidationMessage For="@(() => model.FirstName)" />
+    </div>
+    <div>
+        <label for="lastName">نام خانوادگی:</label>
+        <InputText id="lastName" @bind-Value="model.LastName" />
+        <ValidationMessage For="@(() => model.LastName)" />
+    </div>
+    <div>
+        <label for="mobileNumber">شماره موبایل:</label>
+        <InputText id="mobileNumber" @bind-Value="model.MobileNumber" />
+        <ValidationMessage For="@(() => model.MobileNumber)" />
+    </div>
+    <button class="btn btn-primary" type="submit">ارسال فرم</button>
+</EditForm>
+
+@if (submissionMessage != null)
+{
+    <div class="alert alert-success mt-3">
+        @submissionMessage
+    </div>
+}
+
+@code {
+    private UserModel model = new();
+    private EditContext editContext;
+    private string? submissionMessage;
+
+    private IJSObjectReference? module;
+
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(model);
+        editContext.OnFieldChanged += HandleFieldChanged;
+    }
+
+
+
+    private async void HandleFieldChanged(object sender, FieldChangedEventArgs e)
+    {
+        await SaveFormDataTo_SessionStorageAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/LocalStorageModule.js");
+
+
+                var savedData = await module.InvokeAsync<string>("LocalStorageModule.LoadLocalStorage", "userFormData");
+
+                if (!string.IsNullOrEmpty(savedData))
+                {
+                    var loadedModel = System.Text.Json.JsonSerializer.Deserialize<UserModel>(savedData);
+
+                    if (loadedModel != null)
+                    {
+                        model.FirstName = loadedModel.FirstName;
+                        model.LastName = loadedModel.LastName;
+                        model.MobileNumber = loadedModel.MobileNumber;
+
+                        editContext.NotifyFieldChanged(editContext.Field(nameof(UserModel.FirstName)));
+                        editContext.NotifyFieldChanged(editContext.Field(nameof(UserModel.LastName)));
+                        editContext.NotifyFieldChanged(editContext.Field(nameof(UserModel.MobileNumber)));
+
+
+                        StateHasChanged();
+                    }
+                }
+
+            }
+            catch (JSDisconnectedException ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+
+                Console.Error.WriteLine(ex.Message);
+            }
+
+
+        }
+    }
+
+
+    private async Task SaveFormDataTo_SessionStorageAsync()
+    {
+        if (module == null)
+        {
+            Console.Error.WriteLine("module is null.");
+            return;
+        }
+
+        var serializedData = System.Text.Json.JsonSerializer.Serialize(model);
+        await module.InvokeVoidAsync("LocalStorageModule.SvaeLocalStorage", "userFormData", serializedData);
+
+    }
+
+
+
+    private async Task HandleValidSubmit()
+    {
+
+        submissionMessage = "فرم با موفقیت ارسال شد!";
+        model = new UserModel();
+        editContext = new EditContext(model);
+        StateHasChanged();
+
+        await module.InvokeVoidAsync("LocalStorageModule.ClearLocalStorage", "userFormData");
+
+
+    }
+
+    public class UserModel
+    {
+        [Required(ErrorMessage = "نام الزامی است.")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "نام خانوادگی الزامی است.")]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "شماره موبایل الزامی است.")]
+        [RegularExpression(@"^(\+98|0)?9\d{9}$", ErrorMessage = "شماره موبایل وارد شده معتبر نیست.")]
+        public string MobileNumber { get; set; } = string.Empty;
+    }
+}

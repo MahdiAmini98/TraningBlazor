@@ -1,4 +1,4 @@
-using TraningBlazorProject.Client.Common.Services_Extensions;
+﻿using TraningBlazorProject.Client.Common.Services_Extensions;
 using TraningBlazorProject.Client.Pages;
 using TraningBlazorProject.Client.Pages._4._40_CascadingParameter;
 using TraningBlazorProject.Components;
@@ -6,6 +6,7 @@ using TraningBlazorProject.Client.Services;
 using TraningBlazorProject.Repositories;
 using TraningBlazorProject.Client.Services.ProductServices;
 using TraningBlazorProject.Services;
+using TraningBlazorProject.Client.Pages._8._102_InMemoryStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,9 +39,14 @@ builder.Services.AddSingleton<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ServerProductService>();
 
 
-
+//اضافه کرد http client
 builder.Services.AddHttpClient();
 
+
+
+
+//8.102
+builder.Services.AddScoped<InMemoryStateContainer>();
 
 var app = builder.Build();
 

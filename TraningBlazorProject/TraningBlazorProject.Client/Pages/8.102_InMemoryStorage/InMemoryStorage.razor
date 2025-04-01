@@ -1,0 +1,68 @@
+﻿@page "/InMemoryStateContainer"
+@using TraningBlazorProject.Client.Pages._8._102_InMemoryStorage
+@rendermode InteractiveAuto
+@inject InMemoryStateContainer StateContainer
+<h3>InMemoryStorage</h3>
+@*
+    وقتی داده ای را میخواهیم در بلیزور روی 
+    memory 
+    ram
+    ذخیره کنیم
+    اگر blazor server 
+    باشد روی 
+    memory  سرور
+    و اگر 
+    webasm
+    باشد روی رم مرورگر
+    در این روش ما یک 
+    state container
+    نیاز داریم که اطلاعات روی آن ذخیره کنیم
+
+    وقتی میخواهیم کلاس
+    InMemoryStateContainer
+    در program.cs
+    اضافه کنیم اگر
+    پروژه
+    webasm
+    بود
+    addsinglton
+    میزنیم
+    چون به ازای هر مرور گر یکی می سازد
+    و اگر
+    blazor server بود
+    addscoped 
+    میزنیم که به ازای هر کانکشن سیگنال آر یکی بسازد
+
+
+*@
+
+
+<h3>In-memory state container service</h3>
+
+<p>
+    <label>First Name:</label>
+    <input @bind="StateContainer.FirstName" />
+</p>
+<p>
+    <label>Last Name:</label>
+    <input @bind="StateContainer.LastName" />
+</p>
+<p>
+    <strong>Full Name:</strong> @StateContainer.FirstName @StateContainer.LastName
+</p>
+
+<button class="btn btn-primary" @onclick="ClearFields">Clear</button>
+
+@code {
+    protected override void OnInitialized()
+    {
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+
+    private void ClearFields()
+    {
+        StateContainer.FirstName = string.Empty;
+        StateContainer.LastName = string.Empty;
+    }
+}

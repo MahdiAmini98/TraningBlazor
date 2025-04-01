@@ -1,0 +1,160 @@
+﻿@page "/ClientStorage"
+<h3>ClientStorage</h3>
+
+@*
+    ما اطلاعات به دو صورت می توانیم در سمت مرورگر ذخیره کنیم
+    local storage
+    session storage
+    تنها فرقشم اینکه 
+    اگر تب مرورگر بسته شد اطلاعات
+        session storage
+        پاک می شود
+        ولی برای
+        لوکال اسوریج اینجوری نیست
+
+        نکته مهم :
+        اگر پروژه 
+        Blazor Server 
+        بود برای 
+        ایجاد
+         local storage
+    session storage
+    حتما از کلاس
+    ProtectedLocalStorage
+    و
+    ProtectedSessionStorage
+
+    این دو کلاس داده ها را خود 
+    asp .net core
+    رمز نگاری می کند
+    کدهای بهینه و راحت تری ارایه می دهد
+    و امن تر است
+    من یک مثال در زیر مینویسم 
+    @page "/protected-browser-storage"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using System.Security.Cryptography
+
+@inject ProtectedLocalStorage LocalStorage
+@inject ProtectedSessionStorage SessionStorage
+
+
+
+<h3>Protected Browser Storage </h3>
+<h4>ASP.NET Core Data Protection</h4>
+
+
+<h3>مدیریت نام و نام خانوادگی</h3>
+<hr />
+<div>
+    <h4>نام (LocalStorage)</h4>
+    <input type="text" @bind="firstName" placeholder="نام خود را وارد کنید" />
+    <div>
+        <button class="btn btn-success" @onclick="SaveFirstName">ذخیره در LocalStorage</button>
+        <button class="btn btn-info" @onclick="LoadFirstName">بارگذاری از LocalStorage</button>
+        <button class="btn btn-danger" @onclick="ClearFirstName">حذف از LocalStorage</button>
+    </div>
+</div>
+<hr />
+<div>
+    <h4>نام خانوادگی (SessionStorage)</h4>
+    <input type="text" @bind="lastName" placeholder="نام خانوادگی خود را وارد کنید" />
+    <div>
+        <button class="btn btn-success" @onclick="SaveLastName">ذخیره در SessionStorage</button>
+        <button class="btn btn-info" @onclick="LoadLastName">بارگذاری از SessionStorage</button>
+        <button class="btn btn-danger" @onclick="ClearLastName">حذف از SessionStorage</button>
+    </div>
+</div>
+<hr />
+@if (!string.IsNullOrEmpty(message))
+{
+    <p class="alert alert-info">@message</p>
+}
+
+@code {
+    private string firstName = string.Empty;
+    private string lastName = string.Empty;
+    private string? message;
+
+    // متدهای مربوط به LocalStorage
+    private async Task SaveFirstName()
+    {
+        await LocalStorage.SetAsync("firstName", firstName);
+        message = "نام در LocalStorage ذخیره شد.";
+
+    }
+
+    private async Task LoadFirstName()
+    {
+        try
+        {
+        var result = await LocalStorage.GetAsync<string>("firstName");
+        if(result.Success)
+        {
+            firstName = result.Value;
+            message = "نام از LocalStorage بارگذاری شد.";
+
+        }
+        else
+        {
+            message = "هیچ نامی در LocalStorage یافت نشد.";
+
+        }
+        }
+        catch (CryptographicException ex)
+        {
+
+            throw;
+        }
+
+    }
+
+    private async Task ClearFirstName()
+    {
+        await LocalStorage.DeleteAsync("firstName");
+        firstName = string.Empty;
+        message = "نام از LocalStorage حذف شد.";
+
+    }
+
+    // متدهای مربوط به SessionStorage
+    private async Task SaveLastName()
+    {
+        await SessionStorage.SetAsync("lastName", lastName);
+        message = "نام خانوادگی در SessionStorage ذخیره شد.";
+
+    }
+
+    private async Task LoadLastName()
+    {
+        var result = await SessionStorage.GetAsync<string>("lastName");
+        if (result.Success)
+        {
+            lastName = result.Value!;
+            message = "نام خانوادگی از SessionStorage بارگذاری شد.";
+        }
+        else
+        {
+            message = "هیچ نام خانوادگی در SessionStorage یافت نشد.";
+        }
+
+    }
+
+    private async Task ClearLastName()
+    {
+        await SessionStorage.DeleteAsync("lastName");
+        lastName = string.Empty;
+        message = "نام خانوادگی از SessionStorage حذف شد.";
+
+    }
+}
+
+*@
+<h6>SessionStorage</h6>
+<SessionStorage></SessionStorage>
+<hr/>
+<h6>LocalStorage</h6>
+<LocalStorage></LocalStorage>
+@code {
+
+}

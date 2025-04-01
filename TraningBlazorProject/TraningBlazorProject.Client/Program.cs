@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using TraningBlazorProject.Client.Common.Services_Extensions;
+using TraningBlazorProject.Client.Pages._8._102_InMemoryStorage;
 using TraningBlazorProject.Client.Services;
 using TraningBlazorProject.Client.Services.ProductServices;
 
@@ -21,5 +22,8 @@ builder.Services.AddSharedServices();
 builder.Services.AddHttpClient<IProductService, ClientProductService>(client =>
 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
+
+//8.102
+builder.Services.AddSingleton<InMemoryStateContainer>();
 
 await builder.Build().RunAsync();
