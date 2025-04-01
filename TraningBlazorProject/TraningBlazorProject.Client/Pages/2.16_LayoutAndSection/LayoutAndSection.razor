@@ -1,0 +1,160 @@
+﻿@page "/LayoutAndSection"
+<h3>LayoutAndSection</h3>
+@*
+هر 
+Layout
+که میخاهیم بسازیم باید از 
+LayoutComponentBase
+ارث بری کند
+
+از روش
+@layout MainLayout
+
+میتوانیم Layout
+هر کامپوننت را معرفی کنیم
+
+مبحث
+section ها را
+در Layout
+ها در
+پروژه های 
+mvc  
+داشتیم
+اینجا نیز داریم
+ابتدا در کامپوننت
+section
+را به صورت زیر تعربف می کنیم
+    <Microsoft.AspNetCore.Components.Sections.SectionOutlet SectionName="sectiontest">
+
+    </Microsoft.AspNetCore.Components.Sections.SectionOutlet>
+
+   که یا 
+   SectionName
+   می گیرد
+   یا
+   SectionId
+   و سپس 
+   در کامپوننت ها به صورت زیر صدا میزنیم
+
+<Microsoft.AspNetCore.Components.Sections.SectionContent SectionName="sectiontest">
+    <p>
+        این یک section است
+    </p>
+</Microsoft.AspNetCore.Components.Sections.SectionContent>
+
+در فایل app.razor
+    <HeadOutlet @rendermode="InteractiveAuto" />
+داریم 
+که محتویات تگ
+<head></head>
+در html 
+است
+حالا
+ما با تگ
+
+<HeadContent>
+
+</HeadContent>
+در هر کامپوننت می توانیم این محتویات در کامپوننت ها مدیریت کنی
+
+
+
+
+
+*@
+<HeadContent>
+    <meta name="description" content="">
+    <title>پروژه آموزشی بیلزور</title>
+</HeadContent>
+<Microsoft.AspNetCore.Components.Sections.SectionContent SectionName="sectiontest">
+    <p>
+        این یک section است
+    </p>
+</Microsoft.AspNetCore.Components.Sections.SectionContent>
+
+
+<p>
+    هر 
+    <code>
+        Layout
+
+    </code>
+که میخاهیم بسازیم باید از 
+<code>
+        LayoutComponentBase
+
+</code>
+ارث بری کند
+
+از روش
+<code>
+    @@layout MainLayout
+
+</code>
+میتوانیم Layout
+هر کامپوننت را معرفی کنیم
+
+مبحث
+section ها را
+در Layout
+ها در
+پروژه های 
+mvc  
+داشتیم
+اینجا نیز داریم
+ابتدا در کامپوننت
+section
+را به صورت زیر تعربف می کنیم
+<code>
+        <Microsoft.AspNetCore.Components.Sections.SectionOutlet SectionName="sectiontest">
+
+        </Microsoft.AspNetCore.Components.Sections.SectionOutlet>
+
+</code>
+   که یا 
+   SectionName
+   می گیرد
+   یا
+   SectionId
+   و سپس 
+   در کامپوننت ها به صورت زیر صدا میزنیم
+
+<code>
+        <Microsoft.AspNetCore.Components.Sections.SectionContent SectionName="sectiontest">
+            <p>
+                این یک section است
+            </p>
+        </Microsoft.AspNetCore.Components.Sections.SectionContent>
+
+</code>
+در فایل app.razor
+<code>
+        <HeadOutlet @rendermode="InteractiveAuto" />
+
+</code>
+داریم 
+که محتویات تگ
+<code>
+        <head>
+        </head>
+
+</code>
+در html 
+است
+حالا
+ما با تگ
+<code>
+
+        <HeadContent>
+
+        </HeadContent>
+</code>
+در هر کامپوننت می توانیم این محتویات در کامپوننت ها مدیریت کنی
+
+
+
+
+</p>
+@code {
+
+}

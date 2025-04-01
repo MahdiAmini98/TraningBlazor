@@ -1,0 +1,21 @@
+﻿@page "/MarkupStringAndRouteParameter/{id:int}"
+@page "/MarkupStringAndRouteParameter"
+<h3>MarkupStringAndRouteParameter</h3>
+@*
+    markup string => می توانیم
+    کدهای 
+    html 
+    که به صورت
+    string
+    هست برایمان رندر
+    بگیرد
+
+*@
+
+@((MarkupString)htmlContent)
+@code {
+    private string htmlContent ="<p class='text-danger'>  <h6 class='h6'>  Danger....    </h6></p>";
+
+    private int id;
+
+}

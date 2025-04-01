@@ -1,0 +1,38 @@
+﻿<div class="cart-item">
+    <h4>@ProductName</h4>
+    <p>قیمت واحد: @ProductPrice تومان</p>
+    <label>تعداد:</label>
+    <input type="number" @bind="Quantity" @oninput="OnQuantityChanged" />
+
+    <p>
+        <b class="text-danger">جمع محصول: @((Quantity * ProductPrice).ToString("n0")) تومان</b>
+    </p>
+</div>
+
+@code {
+    [Parameter]
+    public string ProductName { get; set; } = string.Empty;
+
+    [Parameter]
+    public int ProductPrice { get; set; }
+
+    [Parameter]
+    public int Quantity { get; set; }
+
+    [Parameter]
+    public EventCallback<int> QuantityChanged { get; set; }
+
+
+    private Task OnQuantityChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e?.Value?.ToString(), out var newQuantity))
+        {
+            Quantity = newQuantity;
+
+            return QuantityChanged.InvokeAsync(newQuantity);
+        }
+        return Task.CompletedTask;
+    }
+
+
+}

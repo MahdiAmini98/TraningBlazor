@@ -1,0 +1,241 @@
+﻿@page "/DataBinding"
+@using TraningBlazorProject.Client.Pages._2_18_DataBinding.Cart
+<h3>DataBinding</h3>
+@*
+    @bind
+    میتوانیم بایند کنی
+    @bind:event
+    رویدادی که میخواهیم بایند شود می نویسیم
+    @bind:after
+    بعد از اینکه بایند انجام شداین رویداد اجرا میشود
+    ---------------------------------------------------
+    2.19
+    bind:get
+    میگه چه مقداری داخل یک
+    المان
+    مثل input نمایش بدهم
+    bind:set
+    میگه یک متد می گیرد که set کردن 
+    را با آن انجام می دهد
+
+    bind:format
+    برای نوشتن فرمت
+    مثلا فرمت تاریخ
+    و فقط نمایش ساعت و دقیقه
+    ------------------------------------------------
+    2.22
+    
+    chaned binding => با استفاده ار این قابلیت
+    بین چند  کامپوننت بایند می  کنیم
+    مثلا کامپوننت های فرزند و پدر
+    که برای مثال آن
+    مثال سبد خرید به صورت  
+    پرنت و چایلد استفاده کردیم
+    و داده را از کامپوننت بچه به کامپوننت پدر بایند می کنیم
+
+    ما یک قیمت کل در کامپوننت پرنت داریم
+    و تعداد محثولات در کامپوننت فرزند تغییر می کند
+    ما باید دیتا را بین این دو کامپوننت بایند کنیم
+    که وقتی در کامپوننت فرزند تعداد محصول تغییر کرد
+    قیمت کل در کامپوننت پدر تغییر کند
+
+    --------------------------------------------------------
+    2.24
+key handler =>
+ با استفاده از این موارد در بلیزور
+ میتوانیم
+ کیبورد و دکمه های آن را مدیریت کنیم
+
+*@
+
+<PageTitle>Data Binding مثال</PageTitle>
+<div class="container mt-4">
+    <h1 class="text-primary">Data Binding مثال</h1>
+    <div class="mt-3">
+        <label class="form-label">Binding with Value Attribute:</label>
+        <input value="@Email" class="form-control" />
+    </div>
+
+
+    <div class="mt-3">
+        <label class="form-label"> @@bind</label>
+        <input @bind="Email" class="form-control" />
+    </div>
+
+    <div class="mt-3">
+        <label class="form-label"> @@bind:event</label>
+        <input @bind="Email" @bind:event="oninput" class="form-control" />
+    </div>
+
+
+    <div class="mt-3">
+        <label class="form-label"> @@bind:after</label>
+        <input @bind="Email" @bind:event="oninput" @bind:after="ValidateEmail" class="form-control" />
+    </div>
+
+    <p class="text-info">
+        <strong>Validation Result:</strong>
+        @ValidationMessage
+    </p>
+
+
+    <div class="mt-3">
+        <p>
+            <strong>Current email:</strong>
+            <b class="text-danger"> @Email </b>
+        </p>
+    </div>
+</div>
+<hr/>
+
+
+<h3>Two-Way Data Binding - 2.19</h3>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="userNameInput" class="form-label">User Name:</label>
+                <input id="userNameInput" @bind:get="userName" @bind:set="OnUserNameInput" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <hr class="my-4" />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="priceInput" class="form-label">قیمت به ریال:</label>
+                <input id="priceInput" class="form-control" @bind="PriceString" @bind:event="oninput" />
+            </div>
+            <p class="mt-2">
+                <code>price</code>: @price ریال
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<hr/>
+@* 
+2.22 
+chaned binding
+*@
+
+<ShoppingCart></ShoppingCart>
+
+<hr/>
+@* 2.24
+ *@
+
+<h2>Key Handling  </h2>
+<p>
+    <input type="number" @bind="number" @onkeypress="KeyHandler" @onkeypress:preventDefault="true" />
+</p>
+
+<h2>Event Argument  </h2>
+<button class="btn btn-info" @onclick="IncrementCountWithArgs">کلیک با نگه داشتن Ctrl , ShiftKey </button>
+
+
+<button class="@BtnClass" disabled="@(number>8)">
+    تنظیم شرطی disabled
+</button>
+
+
+ @code {
+    private string Email { get; set; } = "test@bugeto.net";
+    private string ValidationMessage { get; set; } = string.Empty;
+
+
+    private void ValidateEmail()
+    {
+        if (string.IsNullOrWhiteSpace(Email)
+    || !Email.Contains("@") ||
+    !Email.Contains("."))
+        {
+            ValidationMessage = "هشدار! ایمیل معتبر نیست.🚫";
+        }
+        else
+        {
+
+            ValidationMessage = "☑️.ایمیل معتبر است";
+
+        }
+    }
+}
+
+
+@code {
+    //2.19
+    private string? userName;
+
+
+    private void OnUserNameInput(string value)
+    {
+        value = value.Trim();
+        userName = System.Text.RegularExpressions.Regex.Replace(value, "\\s+", " ");
+        Check();
+    }
+
+    private void Check()
+    {
+        Console.WriteLine(userName);
+    }
+
+
+
+    //------------------------
+    private int price;
+
+
+    //100,000
+    private string PriceString
+    {
+        get => price.ToString("N0");
+        set
+        {
+            if (int.TryParse(value.Replace(",", ""), out var number))
+            {
+                price = number;
+            }
+        }
+    }
+
+
+}
+
+
+@code {
+    //2.24
+    private int number = 0;
+
+    private string BtnClass => (number > 5) ? "btn btn-danger" : "btn btn-info";
+
+
+    private void KeyHandler(KeyboardEventArgs e)
+    {
+        if (e.Key == "+")
+        {
+            number += 1;
+        }
+        else if (e.Key == "-")
+        {
+            number--;
+        }
+    }
+
+
+    private void IncrementCountWithArgs(MouseEventArgs e)
+    {
+        if (e.CtrlKey)
+        {
+            number--;
+        }
+        else if (e.ShiftKey)
+        {
+            number++;
+        }
+    }
+
+
+
+
+}

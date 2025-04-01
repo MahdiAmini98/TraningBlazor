@@ -1,0 +1,13 @@
+﻿@page "/GenericParameterComponent"
+@typeparam T
+<h3>GenericParameterComponent</h3>
+
+@foreach (var item in Items)
+{
+    <p>@item</p>
+}
+@code {
+
+    [Parameter]
+    public List<T> Items{ get; set; }
+}

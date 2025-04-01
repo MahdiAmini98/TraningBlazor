@@ -1,0 +1,32 @@
+﻿<h3>ShoppingCart</h3>
+<h1>سبد خرید شما</h1>
+
+@foreach (var item in cartItems)
+{
+    <CartItem ProductName="@item.Name" ProductPrice="@item.Price" @bind-Quantity="item.Quantity" />
+    <hr />
+}
+
+<h3 class="text-success">قیمت کل: @TotalPrice.ToString("n0") تومان</h3>
+
+@code {
+
+
+    private List<CartItemModel> cartItems = new()
+    {
+        new CartItemModel { Name = "محصول 1", Price = 50000, Quantity = 3 },
+        new CartItemModel { Name = "محصول 2", Price = 70000, Quantity = 5 },
+    };
+
+
+    private int TotalPrice => cartItems.Sum(item => item.Quantity * item.Price);
+
+    public class CartItemModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public int Price { get; set; }
+        public int Quantity { get; set; }
+    }
+}
+
+
